@@ -5,7 +5,7 @@ import 'package:ejary_cash/main.dart';
 class NotificationRemoteData {
   Api api;
   NotificationRemoteData(this.api);
-  getNotification(token) async {
+  Future<dynamic> getNotification(token) async {
     var response = await api.getData(
       AppLinks.notificationLink,
       {

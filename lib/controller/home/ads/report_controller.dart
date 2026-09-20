@@ -19,7 +19,7 @@ class ReportController extends GetxController {
   AdsRemoteData adsRemoteData = AdsRemoteData(Get.put(Api()));
 
 
-  messageHandleException(message, context) {
+  void messageHandleException(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -60,7 +60,7 @@ class ReportController extends GetxController {
         ));
   }
 
-  messageReport(message, context) {
+  void messageReport(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -98,7 +98,7 @@ class ReportController extends GetxController {
         ));
   }
 
-  makeReport(context) async {
+  Future<void> makeReport(context) async {
     if (report != "") {
       print(report);
       print(adsId);
@@ -141,7 +141,7 @@ class ReportController extends GetxController {
     }
     update();
   }
-  messageHandleExceptionVisitor(message, context) {
+  void messageHandleExceptionVisitor(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -181,7 +181,7 @@ class ReportController extends GetxController {
   }
 
 
-  changeTytpe(reportSelect) {
+  void changeTytpe(reportSelect) {
     report = reportSelect;
 
     update();

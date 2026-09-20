@@ -8,7 +8,7 @@ class LightMode {
   static Color lightYellowColor =const Color.fromRGBO(255, 231, 183, 1);
   static Color greenColor =const Color.fromRGBO(109, 177, 84, 1);
   static Color fillTextFieldColor =
-    const   Color.fromARGB(255, 255, 241, 211).withOpacity(.5);
+    const   Color.fromARGB(255, 255, 241, 211).withValues(alpha: .5);
     static Color greycolor = const Color.fromARGB(234, 234, 234, 234);
     static Color whiteBlueColor=const Color(0xffF3F9FF);
     

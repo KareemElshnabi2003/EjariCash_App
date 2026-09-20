@@ -5,7 +5,7 @@ import 'package:ejary_cash/main.dart';
 class RentRemoteData {
   Api api;
   RentRemoteData(this.api);
-  rentPartener(token, partenerId, yearPrice, notes, date, location) async {
+  Future<dynamic> rentPartener(token, partenerId, yearPrice, notes, date, location) async {
     var response = await api.postData(AppLinks.rentLink, {
       "Accept": "application/json",
       "Lang": sharedPreferences!.getString("local") == "en" ? "en" : "ar",
@@ -23,7 +23,7 @@ class RentRemoteData {
   }
 
   //personal
-  rentPersonal(token, cityrId, yearPrice, areaId, phone, notes, location,
+  Future<dynamic> rentPersonal(token, cityrId, yearPrice, areaId, phone, notes, location,
       paymentPlan, name, brokerName, agree) async {
     var response = await api.postData(AppLinks.rentLink, {
       "Accept": "application/json",
@@ -47,7 +47,7 @@ class RentRemoteData {
   }
 
   //own ads
-  rentOwnAds(token, date, name, email, mobile, adsId,yearlyRent) async {
+  Future<dynamic> rentOwnAds(token, date, name, email, mobile, adsId,yearlyRent) async {
     var response = await api.postData(AppLinks.rentLink, {
       "Accept": "application/json",
       "Lang": sharedPreferences!.getString("local") == "en" ? "en" : "ar",
@@ -66,7 +66,7 @@ class RentRemoteData {
     return response.fold((l) => l, (r) => r);
   }
 
-  getMyRents(
+  Future<dynamic> getMyRents(
     token,
   ) async {
     var response = await api.getData(

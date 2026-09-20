@@ -26,7 +26,7 @@ class ChooseTypeOfAds extends StatelessWidget {
               builder: (controller) => Column(
                 children: [
                   cardTypeAds(
-                      LightMode.greenColor.withOpacity(.5),
+                      LightMode.greenColor.withValues(alpha: .5),
                       Icons.category_outlined,
                       S.of(context).bodyAddAds_1,
                       S.of(context).bodyAddAds_2, () {
@@ -38,7 +38,7 @@ class ChooseTypeOfAds extends StatelessWidget {
                             duration: const Duration(milliseconds: 800));
                   }, controller.choose_1, 1, 46.h),
                   cardTypeAds(
-                      LightMode.yellowColor.withOpacity(.3),
+                      LightMode.yellowColor.withValues(alpha: .3),
                       Icons.electric_bolt_rounded,
                       S.of(context).bodyAddAds_3,
                       S.of(context).bodyAddAds_4, () {
@@ -95,7 +95,7 @@ Widget cardTypeAds(color, icon, title, body, onPress, choose, index, height) {
     decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(4.w),
         border:
-            Border.all(color: LightMode.greycolor.withOpacity(.5), width: 2)),
+            Border.all(color: LightMode.greycolor.withValues(alpha: .5), width: 2)),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -155,7 +155,7 @@ Widget cardTypeAds(color, icon, title, body, onPress, choose, index, height) {
               style: GoogleFonts.tajawal(
                   fontSize: 4.w,
                   fontWeight: FontWeight.w700,
-                  color: LightMode.blackColor.withOpacity(.5)),
+                  color: LightMode.blackColor.withValues(alpha: .5)),
             ))
       ],
     ),
@@ -173,7 +173,7 @@ Widget btnClick(title, onPress, colorText, colorBorder, colorBackGround,
       decoration: BoxDecoration(
          gradient: LinearGradient(colors: [
             LightMode.blueColor,
-            LightMode.blueColor.withOpacity(.8),
+            LightMode.blueColor.withValues(alpha: .8),
           ]),
           border: Border.all(color: colorBorder, width: 2),
           borderRadius: BorderRadius.circular(7.w),

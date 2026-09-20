@@ -108,7 +108,7 @@ Widget cardOfUnit(img, title, address, onPress, unitPrice, numOfShowerRoom,
                   children: [
                     Container(
                       alignment: Alignment.center,
-                      color: LightMode.whiteColor.withOpacity(.5),
+                      color: LightMode.whiteColor.withValues(alpha: .5),
                       width: 25.w,
                       height: 4.h,
                       child: Text(
@@ -246,7 +246,7 @@ Widget favouriteItem(onPressFav, isFav) {
         height: 10.w,
         width: 10.w,
         decoration: BoxDecoration(
-          color: Colors.white70.withOpacity(0.5),
+          color: Colors.white70.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(7.w),
         ),
         child: Icon(

@@ -5,7 +5,6 @@ import 'package:ejary_cash/core/constant/colors.dart';
 import 'package:ejary_cash/core/constant/images.dart';
 import 'package:ejary_cash/data/model/ads_model.dart';
 import 'package:ejary_cash/data/model/order_info_model.dart';
-import 'package:ejary_cash/data/model/partener_model.dart';
 import 'package:ejary_cash/generated/l10n.dart';
 import 'package:ejary_cash/main.dart';
 import 'package:ejary_cash/view/screens/home/ads/ads_info.dart';
@@ -14,9 +13,7 @@ import 'package:ejary_cash/view/screens/home/home_page_owner.dart';
 import 'package:ejary_cash/view/screens/home/notification/notification.dart';
 import 'package:ejary_cash/view/screens/home/orders/make_order/main_make_order.dart';
 import 'package:ejary_cash/view/screens/home/orders/orders_info.dart';
-import 'package:ejary_cash/view/screens/home/projects/all_projects.dart';
 import 'package:ejary_cash/view/screens/home/monthly%20ejar/monthly_ejar_calc.dart';
-import 'package:ejary_cash/view/screens/home/projects/project_info.dart';
 import 'package:ejary_cash/view/widget/loading.dart';
 import 'package:ejary_cash/view/widget/no_data.dart';
 import 'package:flutter/material.dart';
@@ -373,7 +370,7 @@ Widget cardOfUnit(img, title, address, onPress, unitPrice, numOfShowerRoom,
                   children: [
                     Container(
                       alignment: Alignment.center,
-                      color: LightMode.whiteColor.withOpacity(.5),
+                      color: LightMode.whiteColor.withValues(alpha: .5),
                       width: 25.w,
                       height: 4.h,
                       child: Text(
@@ -507,7 +504,7 @@ Widget cardOfOrder(
         Text(
           S.of(Get.context!).yearlyRent,
           style: GoogleFonts.tajawal(
-              color: LightMode.blackColor.withOpacity(.5),
+              color: LightMode.blackColor.withValues(alpha: .5),
               fontSize: 3.5.w,
               fontWeight: FontWeight.w400),
         ),
@@ -527,7 +524,7 @@ Widget cardOfOrder(
         Text(
           S.of(Get.context!).statusContract,
           style: GoogleFonts.tajawal(
-              color: LightMode.blackColor.withOpacity(.5),
+              color: LightMode.blackColor.withValues(alpha: .5),
               fontSize: 3.w,
               fontWeight: FontWeight.w400),
         ),
@@ -700,7 +697,7 @@ Widget partOfEjar(onPress) {
   return Container(
     padding: EdgeInsets.all(4.w),
     width: 100.w,
-    color: LightMode.blueColor.withOpacity(.1),
+    color: LightMode.blueColor.withValues(alpha: .1),
     child: Column(
       children: [
         Row(
@@ -747,7 +744,7 @@ Widget btnClick(title, onPress, colorText, colorBorder, colorBackGround,
       decoration: BoxDecoration(
           gradient: LinearGradient(colors: [
             LightMode.blueColor,
-            LightMode.blueColor.withOpacity(.8),
+            LightMode.blueColor.withValues(alpha: .8),
           ]),
           border: Border.all(color: colorBorder, width: 2),
           borderRadius: BorderRadius.circular(7.w),

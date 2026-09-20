@@ -17,12 +17,12 @@ class FavouriteController extends GetxController {
   StatuesRequest statuesRequest = StatuesRequest.none;
   FavouriteRemoteData settingRemoteData = FavouriteRemoteData(Get.put(Api()));
   Map isFav = {};
-  setFavourite(String id, String val) {
+  void setFavourite(String id, String val) {
     isFav[id] = val;
     update();
   }
 
-  messageHandleException(message, context) {
+  void messageHandleException(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -59,7 +59,7 @@ class FavouriteController extends GetxController {
           ],
         ));
   }
-  messageHandleExceptionVisitor(message, context) {
+  void messageHandleExceptionVisitor(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -96,7 +96,7 @@ class FavouriteController extends GetxController {
         ));
   }
 
-  getFavouriteItems(context) async {
+  Future<void> getFavouriteItems(context) async {
     favouriteItems.clear();
     print("fav");
     statuesRequest = StatuesRequest.loading;
@@ -132,7 +132,7 @@ class FavouriteController extends GetxController {
     update();
   }
 
-  addFavouriteItems(context, adsId) async {
+  Future<void> addFavouriteItems(context, adsId) async {
     statuesRequest = StatuesRequest.loading;
     update();
     var response = await settingRemoteData.addAndDeleteFav(
@@ -162,7 +162,7 @@ class FavouriteController extends GetxController {
     update();
   }
 
-  removeFavouriteItems(context, adsId) async {
+  Future<void> removeFavouriteItems(context, adsId) async {
     statuesRequest = StatuesRequest.loading;
     update();
     var response = await settingRemoteData.addAndDeleteFav(

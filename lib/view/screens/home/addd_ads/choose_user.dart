@@ -70,7 +70,7 @@ Widget btnClick(title, onPress, colorText, colorBorder, colorBackGround) {
       decoration: BoxDecoration(
           gradient: LinearGradient(colors: [
             LightMode.blueColor,
-            LightMode.blueColor.withOpacity(.8),
+            LightMode.blueColor.withValues(alpha: .8),
           ]),
           border: Border.all(color: colorBorder, width: 2),
           borderRadius: BorderRadius.circular(7.w),
@@ -101,7 +101,7 @@ Widget cardTypeAds(color, icon, title, body, onPress, choose) {
         border: Border.all(
             color: choose == true
                 ? LightMode.greenColor
-                : LightMode.greycolor.withOpacity(.5),
+                : LightMode.greycolor.withValues(alpha: .5),
             width: 2)),
     child: Column(
       children: [
@@ -148,7 +148,7 @@ Widget cardTypeAds(color, icon, title, body, onPress, choose) {
                       style: GoogleFonts.tajawal(
                           fontSize: 4.w,
                           fontWeight: FontWeight.w700,
-                          color: LightMode.blackColor.withOpacity(.5)),
+                          color: LightMode.blackColor.withValues(alpha: .5)),
                     )),
               ],
             )

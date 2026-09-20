@@ -20,12 +20,12 @@ class FaqController extends GetxController {
   int index = 0;
   List<FAQModel> result = [];
   Map isFav = {};
-  setFavourite(String id, String val) {
+  void setFavourite(String id, String val) {
     isFav[id] = val;
     update();
   }
 
-  change() {
+  void change() {
     if (isAnswer == false) {
       isAnswer = true;
       update();
@@ -34,7 +34,7 @@ class FaqController extends GetxController {
       update();
     }
   }
-  messageHandleExceptionVisitor(message, context) {
+  void messageHandleExceptionVisitor(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -70,7 +70,7 @@ class FaqController extends GetxController {
           ],
         ));
   }
-  messageHandleException(message, context) {
+  void messageHandleException(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -108,7 +108,7 @@ class FaqController extends GetxController {
         ));
   }
 
-  getFAQ(context) async {
+  Future<void> getFAQ(context) async {
     statuesRequest = StatuesRequest.loading;
     update();
     var response = await settingRemoteData.getFAQ();
@@ -141,7 +141,7 @@ class FaqController extends GetxController {
 
   bool isSearch = false;
 
-  checkSearch(val) {
+  void checkSearch(val) {
     if (val == "") {
       isSearch = false;
       update();
@@ -152,7 +152,7 @@ class FaqController extends GetxController {
     }
   }
 
-  search(val) {
+  void search(val) {
     result.clear();
     result = faqList
         .where((qa) => qa.question!.toLowerCase().contains(val.toLowerCase()))

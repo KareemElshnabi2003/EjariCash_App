@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:screen_go/extensions/responsive_nums.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class OnBoarding extends StatelessWidget {
   const OnBoarding({super.key});
@@ -81,7 +82,7 @@ Widget btnClick(title, onPress) {
       decoration: BoxDecoration(
           gradient: LinearGradient(colors: [
             LightMode.blueColor,
-            LightMode.blueColor.withOpacity(.8),
+            LightMode.blueColor.withValues(alpha: .8),
           ]),
           borderRadius: BorderRadius.circular(7.w),
           color: LightMode.blueColor),
@@ -104,9 +105,11 @@ Widget cardOnBoarding(String img, String img2, String text) {
       SizedBox(
           height: 55.h,
           width: 85.w,
-          child: Image.network(
-            img,
+          child: CachedNetworkImage(
+            imageUrl: img,
             fit: BoxFit.fill,
+            placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+            errorWidget: (context, url, error) => Icon(Icons.error),
           )),
       SizedBox(
         height: 2.h,

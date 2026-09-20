@@ -17,7 +17,7 @@ class NotifyController extends GetxController {
   StatuesRequest statuesRequest = StatuesRequest.none;
   NotificationRemoteData settingRemoteData =
       NotificationRemoteData(Get.put(Api()));
-  messageHandleException(message, context) {
+  void messageHandleException(message, context) {
     Get.defaultDialog(
       title: S.of(context).error,
       content: Column(
@@ -55,7 +55,7 @@ class NotifyController extends GetxController {
       ),
     );
   }
-  messageHandleExceptionVisitor(message, context) {
+  void messageHandleExceptionVisitor(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -93,7 +93,7 @@ class NotifyController extends GetxController {
         ));
   }
 
-  sendNotification(context) async {
+  Future<void> sendNotification(context) async {
     print("notify");
     statuesRequest = StatuesRequest.loading;
     update();
@@ -154,7 +154,7 @@ class NotifyController extends GetxController {
     update();
   }
 
-  getNotificationMainPage(context) async {
+  Future<void> getNotificationMainPage(context) async {
     print("notify");
     statuesRequest = StatuesRequest.loading;
     update();
@@ -224,7 +224,7 @@ class NotifyController extends GetxController {
     update();
   }
 
-  getNotificationPage(context) async {
+  Future<void> getNotificationPage(context) async {
     print("notify");
     statuesRequest = StatuesRequest.loading;
     update();

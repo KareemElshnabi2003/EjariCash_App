@@ -34,18 +34,18 @@ class AdsController extends GetxController {
   List<AdsModel> allAds = [];
   List<AdsOwnerModel> allAdsOwner = [];
 
-  changeTytpe(typeSelect) {
+  void changeTytpe(typeSelect) {
     type = typeSelect;
 
     update();
   }
 
-  plusNum() {
+  void plusNum() {
     numOfRoome++;
     update();
   }
 
-  minusNum() {
+  void minusNum() {
     if (numOfRoome == 0 || numOfRoome < 0) {
     } else {
       numOfRoome--;
@@ -53,7 +53,7 @@ class AdsController extends GetxController {
     }
   }
 
-  setFav() {
+  void setFav() {
     if (isFav == false) {
       isFav = true;
       update();
@@ -63,7 +63,7 @@ class AdsController extends GetxController {
     }
   }
 
-  messageHandleException(message, context) {
+  void messageHandleException(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -101,7 +101,7 @@ class AdsController extends GetxController {
         ));
   }
 
-  messageHandleExceptionVisitor(message, context) {
+  void messageHandleExceptionVisitor(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -211,7 +211,7 @@ class AdsController extends GetxController {
     return allAdsOwner;
   }
 
-  messageFilterAds() {
+  Future<dynamic> messageFilterAds() {
     return Get.bottomSheet(
       isDismissible: false,
       backgroundColor: LightMode.whiteColor,

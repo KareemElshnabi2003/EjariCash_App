@@ -5,7 +5,7 @@ import 'package:ejary_cash/main.dart';
 class SettingRemoteData {
   Api api;
   SettingRemoteData(this.api);
-  getSetting() async {
+  Future<dynamic> getSetting() async {
     var response = await api.getData(
       AppLinks.getSettingLink,
       {"Accept": "application/json", "Lang":sharedPreferences!.getString("local")=="en"?"en":"ar"},
@@ -13,7 +13,7 @@ class SettingRemoteData {
     return response.fold((l) => l, (r) => r);
   }
 
-  getFAQ() async {
+  Future<dynamic> getFAQ() async {
     var response = await api.getData(
       AppLinks.getFAQLink,
       {"Accept": "application/json", "Lang": sharedPreferences!.getString("local")=="en"?"en":"ar"},
@@ -21,7 +21,7 @@ class SettingRemoteData {
     return response.fold((l) => l, (r) => r);
   }
 
-  getCities(int cityId) async {
+  Future<dynamic> getCities(int cityId) async {
     var response = await api.getData(
       "${AppLinks.getCitiesLink}?city_id=$cityId",
       {"Accept": "application/json",  "Lang": sharedPreferences!.getString("local")=="en"?"en":"ar",},
@@ -29,7 +29,7 @@ class SettingRemoteData {
     return response.fold((l) => l, (r) => r);
   }
   
-  getDistricts(int cityId) async {
+  Future<dynamic> getDistricts(int cityId) async {
     var response = await api.getData(
       "${AppLinks.getCitiesLink}?district_id=$cityId",
       {"Accept": "application/json",  "Lang": sharedPreferences!.getString("local")=="en"?"en":"ar",},
@@ -37,7 +37,7 @@ class SettingRemoteData {
     return response.fold((l) => l, (r) => r);
   }
 
-  getAreas() async {
+  Future<dynamic> getAreas() async {
     var response = await api.getData(
       AppLinks.getAreasLink,
       {"Accept": "application/json", "Lang": sharedPreferences!.getString("local")=="en"?"en":"ar",},
@@ -45,7 +45,7 @@ class SettingRemoteData {
     return response.fold((l) => l, (r) => r);
   }
 
-   getCategories() async {
+   Future<dynamic> getCategories() async {
     var response = await api.getData(
       AppLinks.getCategoriesLink,
       {"Accept": "application/json", "Lang": sharedPreferences!.getString("local")=="en"?"en":"ar",},

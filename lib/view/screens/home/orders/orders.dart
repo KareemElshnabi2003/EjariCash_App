@@ -147,7 +147,7 @@ Widget cardOfOrder(
         Text(
           S.of(Get.context!).yearlyRent,
           style: GoogleFonts.tajawal(
-              color: LightMode.blackColor.withOpacity(.5),
+              color: LightMode.blackColor.withValues(alpha: .5),
               fontSize: 3.5.w,
               fontWeight: FontWeight.w400),
         ),
@@ -167,7 +167,7 @@ Widget cardOfOrder(
         Text(
           S.of(Get.context!).statusContract,
           style: GoogleFonts.tajawal(
-              color: LightMode.blackColor.withOpacity(.5),
+              color: LightMode.blackColor.withValues(alpha: .5),
               fontSize: 3.w,
               fontWeight: FontWeight.w400),
         ),
@@ -210,7 +210,7 @@ Widget appBarOrders(onPressBack, text) {
             decoration: BoxDecoration(
                 gradient: LinearGradient(colors: [
                   LightMode.blueColor,
-                  LightMode.blueColor.withOpacity(.8),
+                  LightMode.blueColor.withValues(alpha: .8),
                 ]),
                 borderRadius: BorderRadius.circular(3.w),
                 color: LightMode.blueColor),

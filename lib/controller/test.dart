@@ -12,7 +12,7 @@ class Test extends GetxController{
   TestRemoteData testRemoteData=TestRemoteData(Get.put(Api()));
   List<TestModel> data=[];
 
-  getdata()async{
+  Future<void> getdata()async{
     statuesRequest=StatuesRequest.loading;
     update();
 var response=await testRemoteData.getData();

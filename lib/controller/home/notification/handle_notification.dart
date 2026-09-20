@@ -63,7 +63,7 @@ class FirebaseNotification {
     });
   }
 
-  firebasemessaginsetting() async {
+  Future<void> firebasemessaginsetting() async {
     NotificationSettings settings = await firebaseMessagin.requestPermission(
       alert: true,
       announcement: false,

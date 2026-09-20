@@ -27,7 +27,7 @@ class ForgetPassController extends GetxController {
   bool showPass_1 = true;
   bool showPass_2 = true;
 
-  showPassword_1() {
+  void showPassword_1() {
     if (showPass_1 == false) {
       showPass_1 = true;
       update();
@@ -37,7 +37,7 @@ class ForgetPassController extends GetxController {
     }
   }
 
-  showPassword_2() {
+  void showPassword_2() {
     if (showPass_2 == false) {
       showPass_2 = true;
       update();
@@ -47,7 +47,7 @@ class ForgetPassController extends GetxController {
     }
   }
 
-  emailValidate(String val) {
+  String? emailValidate(String val) {
     if (val.isEmpty) {
       return S.of(Get.context!).errorEmail_1;
     } else if (!val.isEmail) {
@@ -59,7 +59,7 @@ class ForgetPassController extends GetxController {
     }
   }
 
-  passwordValidate(String val) {
+  String? passwordValidate(String val) {
     if (val.isEmpty) {
       return S.of(Get.context!).errorPass_1;
     } else if (val.length < 8) {
@@ -71,7 +71,7 @@ class ForgetPassController extends GetxController {
     }
   }
 
-  passwordConfirmationValidate(String val) {
+  String? passwordConfirmationValidate(String val) {
     if (val.isEmpty) {
       return S.of(Get.context!).errorConfirmPass_1;
     } else if (passwordController.text != passwordConfirmationController.text) {
@@ -81,7 +81,7 @@ class ForgetPassController extends GetxController {
     }
   }
 
-  messageHandleException(message, context) {
+  void messageHandleException(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -119,7 +119,7 @@ class ForgetPassController extends GetxController {
         ));
   }
 
-  forgetPass(context) async {
+  Future<void> forgetPass(context) async {
     if (forgetGlobalKey.currentState!.validate()) {
       statuesRequest = StatuesRequest.loading;
       update();
@@ -161,7 +161,7 @@ class ForgetPassController extends GetxController {
     update();
   }
 
-  addNewPass(context) async {
+  Future<void> addNewPass(context) async {
     if (addNewPassGlobelKey.currentState!.validate()) {
       statuesRequest = StatuesRequest.loading;
       update();

@@ -67,7 +67,7 @@ class NotificationPage extends StatelessWidget {
                                         fontSize: 3.w,
                                         fontWeight: FontWeight.w600,
                                         color: LightMode.blackColor
-                                            .withOpacity(.8))),
+                                            .withValues(alpha: .8))),
                                 trailing: Text(
                                     formatDateToRelativeTime(DateTime.parse(
                                         controller.notifycationsList[index]
@@ -76,7 +76,7 @@ class NotificationPage extends StatelessWidget {
                                         fontSize: 2.5.w,
                                         fontWeight: FontWeight.w500,
                                         color: LightMode.blackColor
-                                            .withOpacity(.8))),
+                                            .withValues(alpha: .8))),
                                 onTap: () {},
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.all(

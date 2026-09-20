@@ -16,7 +16,7 @@ class AdsInfoController extends GetxController {
     update();
   }
 
-  setFav() {
+  void setFav() {
     if (isFav == false) {
       isFav = true;
       update();

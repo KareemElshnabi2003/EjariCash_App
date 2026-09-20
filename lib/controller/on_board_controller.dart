@@ -17,7 +17,7 @@ class OnBoardController extends GetxController {
   OnBoardingRemoteData rentRemoteData = OnBoardingRemoteData(Get.put(Api()));
 
   int indexList = 0;
-  onPressNext() {
+  void onPressNext() {
     if (indexList == 0) {
       indexList++;
 
@@ -29,14 +29,14 @@ class OnBoardController extends GetxController {
     }
   }
 
-  onPressSkip() {
+  void onPressSkip() {
     Get.to(() => const MainAuth(),
         transition: Transition.leftToRightWithFade,
         duration: const Duration(milliseconds: 800));
   }
 
   List<OnBoardingModel> onBoarding = [];
-  getAllUnites(context) async {
+  Future<void> getAllUnites(context) async {
     onBoarding.clear();
     statuesRequest_3 = StatuesRequest.loading;
     update();
@@ -69,7 +69,7 @@ class OnBoardController extends GetxController {
     update();
   }
 
-  messageHandleException(message, context) {
+  void messageHandleException(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -107,7 +107,7 @@ class OnBoardController extends GetxController {
         ));
   }
 
-  messageHandleExceptionVisitor(message, context) {
+  void messageHandleExceptionVisitor(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(

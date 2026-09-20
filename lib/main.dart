@@ -1,8 +1,6 @@
 import 'package:device_preview/device_preview.dart';
-import 'package:ejary_cash/controller/home/notification/handle_notification.dart';
 import 'package:ejary_cash/generated/l10n.dart';
 import 'package:ejary_cash/view/screens/splash_screen.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
@@ -23,8 +21,8 @@ void main() async {
   //   options: DefaultFirebaseOptions.currentPlatform,
   // );
   
-  FirebaseNotification().firebasemessaginsetting();
-  FirebaseNotification().intilizeNotification();
+  // FirebaseNotification().firebasemessaginsetting();
+  // FirebaseNotification().intilizeNotification();
   runApp(
     DevicePreview(
       enabled: false, // Enable in debug mode only

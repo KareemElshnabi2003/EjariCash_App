@@ -285,7 +285,7 @@ Widget appBarAdsInfo(onPressBack, text, context) {
                 decoration: BoxDecoration(
                     gradient: LinearGradient(colors: [
                       LightMode.blueColor,
-                      LightMode.blueColor.withOpacity(.8),
+                      LightMode.blueColor.withValues(alpha: .8),
                     ]),
                     borderRadius: BorderRadius.circular(3.w),
                     color: LightMode.blueColor),

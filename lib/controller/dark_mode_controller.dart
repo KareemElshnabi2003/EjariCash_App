@@ -5,7 +5,7 @@ import '../main.dart';
 
 class DarkModeController extends GetxController {
   bool value = false;
-  enableDarkMode(bool val) {
+  void enableDarkMode(bool val) {
     value = val;
     sharedPreferences!.setBool("darkMode", value);
     print("${sharedPreferences!.getBool("darkMode")}");
@@ -13,7 +13,7 @@ class DarkModeController extends GetxController {
     update();
   }
 
-  checkMode() {
+  void checkMode() {
     if (sharedPreferences!.getBool("darkMode") == false) {
 
     } else if (sharedPreferences!.getBool("darkMode") == true) {

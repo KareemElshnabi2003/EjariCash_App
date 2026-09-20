@@ -23,7 +23,7 @@ class PrivacyController extends GetxController {
     htmlData = settingModel!.privacy!;
     update();
   }
-  messageHandleExceptionVisitor(message, context) {
+  void messageHandleExceptionVisitor(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -59,7 +59,7 @@ class PrivacyController extends GetxController {
           ],
         ));
   }
-  messageHandleException(message, context) {
+  void messageHandleException(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -97,7 +97,7 @@ class PrivacyController extends GetxController {
         ));
   }
 
-  getSetting(context) async {
+  Future<void> getSetting(context) async {
     statuesRequest = StatuesRequest.loading;
     update();
     var response = await settingRemoteData.getSetting();
@@ -130,7 +130,7 @@ class PrivacyController extends GetxController {
     update();
   }
 
-  chang_1() {
+  void chang_1() {
     if (isAnswer_1 == false) {
       isAnswer_1 = true;
       update();
@@ -141,7 +141,7 @@ class PrivacyController extends GetxController {
   }
 
   bool isAnswer_2 = false;
-  chang_2() {
+  void chang_2() {
     if (isAnswer_2 == false) {
       isAnswer_2 = true;
       update();
@@ -152,7 +152,7 @@ class PrivacyController extends GetxController {
   }
 
   bool isAnswer_3 = false;
-  chang_3() {
+  void chang_3() {
     if (isAnswer_3 == false) {
       isAnswer_3 = true;
       update();
@@ -163,7 +163,7 @@ class PrivacyController extends GetxController {
   }
 
   bool isAnswer_4 = false;
-  chang_4() {
+  void chang_4() {
     if (isAnswer_4 == false) {
       isAnswer_4 = true;
       update();

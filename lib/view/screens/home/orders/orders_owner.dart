@@ -22,7 +22,7 @@ class OrdersOwner extends StatelessWidget {
     return Container(
       width: 100.w,
       height: 100.h,
-      color: LightMode.whiteColor.withOpacity(.9),
+      color: LightMode.whiteColor.withValues(alpha: .9),
       child: Container(
         margin: EdgeInsets.only(right: 5.w, left: 5.w, bottom: 10.w),
         width: 100.w,
@@ -106,7 +106,7 @@ Widget cardOrderPage(icon, fav, text, number) {
           3.w,
         ),
         color: LightMode.whiteColor,
-        border: Border.all(color: LightMode.blackColor.withOpacity(.1))),
+        border: Border.all(color: LightMode.blackColor.withValues(alpha: .1))),
     child: Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [

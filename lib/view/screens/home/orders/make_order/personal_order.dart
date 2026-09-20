@@ -302,7 +302,7 @@ Widget textFailedDescription(controller, keyBoardType, obscure, hintText,
           labelStyle: GoogleFonts.tajawal(
               fontSize: 5.w,
               fontWeight: FontWeight.w700,
-              color: LightMode.blueColor.withOpacity(.5)),
+              color: LightMode.blueColor.withValues(alpha: .5)),
           suffixIcon: iconic == true ? icon : null,
           suffixIconColor: LightMode.blueColor),
     ),
@@ -531,7 +531,7 @@ Widget textFailed(controller, keyBoardType, obscure, hintText, bool iconic,
         labelStyle: GoogleFonts.tajawal(
             fontSize: 5.w,
             fontWeight: FontWeight.w700,
-            color: LightMode.blueColor.withOpacity(.5)),
+            color: LightMode.blueColor.withValues(alpha: .5)),
         suffixIcon: iconic == true ? icon : null,
         suffixIconColor: LightMode.blueColor),
   );

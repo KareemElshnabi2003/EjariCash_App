@@ -396,14 +396,14 @@ Widget detailesAds(typeOfUnit, bathRoom, area, widthStreet, yearOfBuilt,
                 style: GoogleFonts.tajawal(
                     fontSize: 4.w,
                     fontWeight: FontWeight.w600,
-                    color: LightMode.blackColor.withOpacity(.5)),
+                    color: LightMode.blackColor.withValues(alpha: .5)),
               ),
               Text(
                 S.of(Get.context!).bathroom,
                 style: GoogleFonts.tajawal(
                     fontSize: 4.w,
                     fontWeight: FontWeight.w600,
-                    color: LightMode.blackColor.withOpacity(.5)),
+                    color: LightMode.blackColor.withValues(alpha: .5)),
               ),
             ],
           ),
@@ -446,14 +446,14 @@ Widget detailesAds(typeOfUnit, bathRoom, area, widthStreet, yearOfBuilt,
                 style: GoogleFonts.tajawal(
                     fontSize: 4.w,
                     fontWeight: FontWeight.w600,
-                    color: LightMode.blackColor.withOpacity(.5)),
+                    color: LightMode.blackColor.withValues(alpha: .5)),
               ),
               Text(
                 S.of(Get.context!).widthStreet,
                 style: GoogleFonts.tajawal(
                     fontSize: 4.w,
                     fontWeight: FontWeight.w600,
-                    color: LightMode.blackColor.withOpacity(.5)),
+                    color: LightMode.blackColor.withValues(alpha: .5)),
               ),
             ],
           ),
@@ -496,14 +496,14 @@ Widget detailesAds(typeOfUnit, bathRoom, area, widthStreet, yearOfBuilt,
                 style: GoogleFonts.tajawal(
                     fontSize: 4.w,
                     fontWeight: FontWeight.w600,
-                    color: LightMode.blackColor.withOpacity(.5)),
+                    color: LightMode.blackColor.withValues(alpha: .5)),
               ),
               Text(
                 S.of(Get.context!).face,
                 style: GoogleFonts.tajawal(
                     fontSize: 4.w,
                     fontWeight: FontWeight.w600,
-                    color: LightMode.blackColor.withOpacity(.5)),
+                    color: LightMode.blackColor.withValues(alpha: .5)),
               ),
             ],
           ),
@@ -569,7 +569,7 @@ Widget detailesAds(typeOfUnit, bathRoom, area, widthStreet, yearOfBuilt,
                   decoration: BoxDecoration(
                       gradient: LinearGradient(colors: [
                         LightMode.blueColor,
-                        LightMode.blueColor.withOpacity(.8),
+                        LightMode.blueColor.withValues(alpha: .8),
                       ]),
                       borderRadius: BorderRadius.circular(6.w),
                       color: LightMode.blueColor),
@@ -773,7 +773,7 @@ Widget imageWithIconFavO(onPressFav, img, isFav) {
             height: 9.w,
             decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: LightMode.greycolor.withOpacity(.5)),
+                color: LightMode.greycolor.withValues(alpha: .5)),
             child: IconButton(
               icon: Icon(
                 isFav == "0" || isFav == null

@@ -18,12 +18,12 @@ class HomeController extends GetxController {
     const Orders(),
     const Profilepage(),
   ];
-  changePage(int pageIndex) {
+  void changePage(int pageIndex) {
     currentIndex = pageIndex;
     update();
   }
 
-  goToHomeWithIndex(index, arguments) {
+  void goToHomeWithIndex(index, arguments) {
     Get.offAll(() => const Home(), arguments: arguments);
     currentIndex = index;
     update();

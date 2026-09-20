@@ -77,7 +77,7 @@ class UpdateProfileController extends GetxController {
     }
   }
 
-  showPassword_1() {
+  void showPassword_1() {
     if (showPass_1 == false) {
       showPass_1 = true;
       update();
@@ -87,7 +87,7 @@ class UpdateProfileController extends GetxController {
     }
   }
 
-  showPassword_2() {
+  void showPassword_2() {
     if (showPass_2 == false) {
       showPass_2 = true;
       update();
@@ -97,7 +97,7 @@ class UpdateProfileController extends GetxController {
     }
   }
 
-  showPassword_3() {
+  void showPassword_3() {
     if (showPass_3 == false) {
       showPass_3 = true;
       update();
@@ -107,7 +107,7 @@ class UpdateProfileController extends GetxController {
     }
   }
 
-  showPassword_4() {
+  void showPassword_4() {
     if (showPass_4 == false) {
       showPass_4 = true;
       update();
@@ -117,7 +117,7 @@ class UpdateProfileController extends GetxController {
     }
   }
 
-  passwordValidate(String val, context) {
+  String? passwordValidate(String val, context) {
     if (val.isEmpty) {
       return S.of(context).errorPass_1;
     } else if (val.length < 8) {
@@ -129,7 +129,7 @@ class UpdateProfileController extends GetxController {
     }
   }
 
-  newpasswordValidate(String val, context) {
+  String? newpasswordValidate(String val, context) {
     if (val.isEmpty) {
       return S.of(context).errorPass_1;
     } else if (val.length < 8) {
@@ -141,7 +141,7 @@ class UpdateProfileController extends GetxController {
     }
   }
 
-  newpasswordConfirmationValidate(String val, context) {
+  String? newpasswordConfirmationValidate(String val, context) {
     if (val.isEmpty) {
       return S.of(context).errorConfirmPass_1;
     } else if (newpasswordController.text !=
@@ -152,7 +152,7 @@ class UpdateProfileController extends GetxController {
     }
   }
 
-  nameValidate(String val, context) {
+  String? nameValidate(String val, context) {
     if (val.isEmpty) {
       return S.of(context).errorUserName_1;
     } else if (val.length < 3) {
@@ -164,7 +164,7 @@ class UpdateProfileController extends GetxController {
     }
   }
 
-  messageHandleExceptionVisitor(message, context) {
+  void messageHandleExceptionVisitor(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -202,7 +202,7 @@ class UpdateProfileController extends GetxController {
         ));
   }
 
-  messageHandleException(message, context) {
+  void messageHandleException(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -240,7 +240,7 @@ class UpdateProfileController extends GetxController {
         ));
   }
 
-  updateProfile(context) async {
+  Future<void> updateProfile(context) async {
     // sharedPreferences!.clear();
     if (updateGlobalKey.currentState!.validate()) {
       statuesRequest = StatuesRequest.loading;
@@ -310,7 +310,7 @@ class UpdateProfileController extends GetxController {
     update();
   }
 
-  deleteAccount(context) async {
+  Future<void> deleteAccount(context) async {
     enable = false;
     var response = await registerRemoteData.deleteAccount(
         sharedPreferences!.getString("token"), passwordDeleteAccount.text);
@@ -345,7 +345,7 @@ class UpdateProfileController extends GetxController {
     update();
   }
 
-  messageToDeleteAccount() {
+  void messageToDeleteAccount() {
     Get.defaultDialog(
         title: S.of(Get.context!).deleteAccount,
         titleStyle: TextStyle(
@@ -441,7 +441,7 @@ class UpdateProfileController extends GetxController {
         ));
   }
 
-  changePassword(context) async {
+  Future<void> changePassword(context) async {
     // sharedPreferences!.clear();
     if (changePassGlobalKey.currentState!.validate()) {
       statuesRequest = StatuesRequest.loading;

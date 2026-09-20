@@ -35,7 +35,7 @@ class Home extends StatelessWidget {
                       : Icons.home_outlined,
                   22.w,
                   controller.currentIndex == 0
-                      ? LightMode.blueColor.withOpacity(.8)
+                      ? LightMode.blueColor.withValues(alpha: .8)
                       : LightMode.blackColor),
               itemNavigationBar(S.of(context).ads, () async{
                 
@@ -46,7 +46,7 @@ class Home extends StatelessWidget {
                       : Icons.campaign_outlined,
                   18.w,
                   controller.currentIndex == 1
-                      ? LightMode.blueColor.withOpacity(.8)
+                      ? LightMode.blueColor.withValues(alpha: .8)
                       : LightMode.blackColor),
               itemNavigationBar(S.of(context).orders, () {
                 controller.changePage(2);
@@ -56,7 +56,7 @@ class Home extends StatelessWidget {
                       : Icons.list_alt_outlined,
                   20.w,
                   controller.currentIndex == 2
-                      ? LightMode.blueColor.withOpacity(.8)
+                      ? LightMode.blueColor.withValues(alpha: .8)
                       : LightMode.blackColor),
               itemNavigationBar(S.of(context).profile, () {
                 controller.changePage(3);
@@ -66,7 +66,7 @@ class Home extends StatelessWidget {
                       : Icons.person_2_outlined,
                   20.w,
                   controller.currentIndex == 3
-                      ? LightMode.blueColor.withOpacity(.8)
+                      ? LightMode.blueColor.withValues(alpha: .8)
                       : LightMode.blackColor),
             ],
           ),

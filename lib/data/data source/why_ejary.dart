@@ -5,7 +5,7 @@ import 'package:ejary_cash/main.dart';
 class WhyEjaryRemoteData {
   Api api;
   WhyEjaryRemoteData(this.api);
-  getInformation() async {
+  Future<dynamic> getInformation() async {
     var response = await api.getData(AppLinks.whyEjaryLink, {
       "Accept": "application/json",
       "Lang": sharedPreferences!.getString("local")=="en"?"en":"ar",

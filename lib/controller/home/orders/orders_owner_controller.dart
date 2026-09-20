@@ -16,7 +16,7 @@ class OrdersOwnerController extends GetxController {
   RegisterRemoteData registerRemoteData = RegisterRemoteData(Get.put(Api()));
 
   UserModel? userModel;
-  messageHandleException(message, context) {
+  void messageHandleException(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -54,7 +54,7 @@ class OrdersOwnerController extends GetxController {
         ));
   }
 
-  getUserInfo(context) async {
+  Future<void> getUserInfo(context) async {
     statuesRequest = StatuesRequest.loading;
     update();
     var response = await registerRemoteData

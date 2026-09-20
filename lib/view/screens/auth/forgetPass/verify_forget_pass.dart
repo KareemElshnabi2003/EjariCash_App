@@ -25,7 +25,7 @@ class VerifyCodeForgetPass extends StatelessWidget {
         Scaffold(
       backgroundColor: LightMode.whiteColor,
       body: OfflineBuilder(
-        connectivityBuilder: (context, ConnectivityResult value, child) {
+        connectivityBuilder: (context, List<ConnectivityResult> value, child){
           final bool connected = value != ConnectivityResult.none;
 
           if (connected) {
@@ -139,7 +139,7 @@ class VerifyCodeForgetPass extends StatelessWidget {
         decoration: BoxDecoration(
            gradient: LinearGradient(colors: [
             LightMode.blueColor,
-            LightMode.blueColor.withOpacity(.8),
+            LightMode.blueColor.withValues(alpha: .8),
           ]),
             border: Border.all(color: colorBorder, width: 2),
             borderRadius: BorderRadius.circular(7.w),

@@ -25,7 +25,7 @@ class OrdersController extends GetxController {
   bool choose_2 = false;
   bool choose_3 = false;
   bool choose = false;
-  checkValue() {
+  void checkValue() {
     if (choose == false) {
       choose = true;
       update();
@@ -78,7 +78,7 @@ class OrdersController extends GetxController {
   List paymentPlans = ["دفعة واحدة", "دفعتان"];
   String? paymentPlan;
   int? paymentId;
-  changePAymentPlan(val) {
+  void changePAymentPlan(val) {
     log(val);
     paymentPlan = val;
     paymentId = val == "دفعة واحدة" ? 1 : 2;
@@ -91,7 +91,7 @@ class OrdersController extends GetxController {
     update();
   }
 
-  computeMonthlyRent() {
+  void computeMonthlyRent() {
     monthRentController.text = paymentId == 2
         ? ((double.parse(yearelyRentController.text == ""
                         ? "0"
@@ -119,20 +119,20 @@ class OrdersController extends GetxController {
   }
 
   String type = "";
-  changeTytpe(typeSelect) {
+  void changeTytpe(typeSelect) {
     type = typeSelect;
 
     update();
   }
 
-  changePartener(val) {
+  void changePartener(val) {
     partenerController = val;
     //  partenerId = val.id.toString();
 
     update();
   }
 
-  changeCity(val) {
+  void changeCity(val) {
     cityName = val;
     getDistricts(Get.context);
     //  partenerId = val.id.toString();
@@ -140,7 +140,7 @@ class OrdersController extends GetxController {
     update();
   }
 
-  changeArea(val) {
+  void changeArea(val) {
     areaName = val;
 
     getCities(Get.context);
@@ -153,13 +153,13 @@ class OrdersController extends GetxController {
 
   String? districtName;
   int? districtId;
-  changeDistrict(val) {
+  void changeDistrict(val) {
     districtName = val;
 
     update();
   }
 
-  getDistricts(context) async {
+  Future<void> getDistricts(context) async {
     districtsList.clear();
     districtName = null;
     districtId = null;
@@ -193,7 +193,7 @@ class OrdersController extends GetxController {
     update();
   }
 
-  messageHandleExceptionVisitor(message, context) {
+  void messageHandleExceptionVisitor(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -231,7 +231,7 @@ class OrdersController extends GetxController {
         ));
   }
 
-  messageLogOut() {
+  void messageLogOut() {
     Get.defaultDialog(
         title: S.of(Get.context!).deleteAccount,
         titleStyle: TextStyle(
@@ -291,7 +291,7 @@ class OrdersController extends GetxController {
         ));
   }
 
-  getAllProjects(context) async {
+  Future<void> getAllProjects(context) async {
     statuesRequest = StatuesRequest.loading;
     update();
     var response = await projectsRemoteData
@@ -324,7 +324,7 @@ class OrdersController extends GetxController {
     update();
   }
 
-  getCities(context) async {
+  Future<void> getCities(context) async {
     citiesList.clear();
     cityName = null;
     cityId = null;
@@ -358,7 +358,7 @@ class OrdersController extends GetxController {
     update();
   }
 
-  getAreas(context) async {
+  Future<void> getAreas(context) async {
     var response = await settingRemoteData.getAreas();
     print(" response ??? ${response}");
 
@@ -388,7 +388,7 @@ class OrdersController extends GetxController {
     update();
   }
 
-  messageHandleException(message, context) {
+  void messageHandleException(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -468,7 +468,7 @@ class OrdersController extends GetxController {
     }
   }
 
-  change_1() {
+  void change_1() {
     if (choose_1 == false) {
       choose_1 = true;
       index = 0;
@@ -483,7 +483,7 @@ class OrdersController extends GetxController {
     }
   }
 
-  change_2() {
+  void change_2() {
     if (choose_2 == false) {
       choose_2 = true;
       index = 1;
@@ -497,7 +497,7 @@ class OrdersController extends GetxController {
     }
   }
 
-  change_3() {
+  void change_3() {
     if (choose_3 == false) {
       choose_3 = true;
       index = 2;
@@ -511,7 +511,7 @@ class OrdersController extends GetxController {
     }
   }
 
-  rentPartener(context) async {
+  Future<void> rentPartener(context) async {
     if (partenerRentKey.currentState!.validate()) {
       log("$partenerId");
       statuesRequest = StatuesRequest.loading;
@@ -554,7 +554,7 @@ class OrdersController extends GetxController {
     update();
   }
 
-  rentPersobal(context) async {
+  Future<void> rentPersobal(context) async {
     if (personalRentKey.currentState!.validate()) {
       log("$partenerId");
       statuesRequest = StatuesRequest.loading;
@@ -604,7 +604,7 @@ class OrdersController extends GetxController {
     update();
   }
 
-  rentOwnAds(context, adsId,yearlyRent) async {
+  Future<void> rentOwnAds(context, adsId,yearlyRent) async {
     log(adsId);
     if (choose == true) {
       statuesRequest = StatuesRequest.loading;

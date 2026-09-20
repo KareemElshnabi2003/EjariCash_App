@@ -4,28 +4,31 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:screen_go/extensions/responsive_nums.dart';
 
-Widget noData(text) {
+Widget noData(String text) {
   return Container(
-                                  margin: EdgeInsets.only(top: 5.h),
-                                  height: 10.h,
-                                  width: 60.w,
-                                  child: DottedBorder(
-                                    dashPattern: const [8, 4],
-                                    radius: const Radius.circular(10),
-                                    strokeWidth: 1.5,
-                                    borderType: BorderType.RRect,
-                                    color: LightMode.blueColor,
-                                    child: Center(
-                                      child: Text(
-                                        text,
-                                        textDirection: TextDirection.rtl,
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.tajawal(
-                                            fontSize: 3.5.w,
-                                            fontWeight: FontWeight.bold,
-                                            color: LightMode.blueColor),
-                                      ),
-                                    ),
-                                  ),
-                                );
+    margin: EdgeInsets.only(top: 5.h),
+    height: 10.h,
+    width: 60.w,
+    child: DottedBorder(
+      // Wrap your previous styling properties inside the new options class
+      options: RoundedRectDottedBorderOptions(
+        dashPattern: const [8, 4],
+        radius: const Radius.circular(10),
+        strokeWidth: 1.5,
+        color: LightMode.blueColor,
+      ),
+      child: Center(
+        child: Text(
+          text,
+          textDirection: TextDirection.rtl,
+          textAlign: TextAlign.center,
+          style: GoogleFonts.tajawal(
+            fontSize: 3.5.w,
+            fontWeight: FontWeight.bold,
+            color: LightMode.blueColor,
+          ),
+        ),
+      ),
+    ),
+  );
 }

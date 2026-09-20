@@ -25,7 +25,7 @@ class VerifyCodeController extends GetxController {
 
   String? verifyCodeActivate;
 
-  messageHandleException(message, context) {
+  void messageHandleException(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -63,7 +63,7 @@ class VerifyCodeController extends GetxController {
         ));
   }
 
-  verifyRegister(context) async {
+  Future<void> verifyRegister(context) async {
     if (verifyCodeRegister != null) {
       statuesRequest = StatuesRequest.loading;
       update();
@@ -103,7 +103,7 @@ class VerifyCodeController extends GetxController {
     update();
   }
 
-  verifyForgetPass(context) async {
+  Future<void> verifyForgetPass(context) async {
     print(verifyCodeForgetPass);
     if (verifyCodeForgetPass != null) {
       statuesRequest = StatuesRequest.loading;
@@ -144,7 +144,7 @@ class VerifyCodeController extends GetxController {
     update();
   }
 
-  verifyActivate(context) async {
+  Future<void> verifyActivate(context) async {
     if (verifyCodeActivate != null) {
       statuesRequest = StatuesRequest.loading;
       update();
@@ -184,7 +184,7 @@ class VerifyCodeController extends GetxController {
     update();
   }
 
-  messageSuccsessSign() {
+  void messageSuccsessSign() {
     Get.defaultDialog(
         backgroundColor: LightMode.whiteColor,
         title: "",
@@ -202,7 +202,7 @@ class VerifyCodeController extends GetxController {
     });
   }
 
-  resendCode(context) async {
+  Future<void> resendCode(context) async {
     statuesRequest = StatuesRequest.loading;
     update();
     var response = await registerRemoteData

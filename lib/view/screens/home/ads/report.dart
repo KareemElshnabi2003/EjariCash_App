@@ -39,7 +39,7 @@ class Report extends StatelessWidget {
             ),
             btnClick(S.of(context).report, () {
               controller.makeReport(context);
-            }, LightMode.whiteColor, LightMode.yellowColor.withOpacity(0),
+            }, LightMode.whiteColor, LightMode.yellowColor.withValues(alpha: 0),
                 LightMode.yellowColor),
             SizedBox(
               height: 2.h,
@@ -206,7 +206,7 @@ Widget typeOfReport(
                     borderSide: BorderSide(color: LightMode.blackColor)),
                 labelText: S.of(context).enterReason,
                 labelStyle: GoogleFonts.tajawal(
-                    color: LightMode.blueColor.withOpacity(.8),
+                    color: LightMode.blueColor.withValues(alpha: .8),
                     fontSize: 4.w,
                     fontWeight: FontWeight.w600)),
           ),

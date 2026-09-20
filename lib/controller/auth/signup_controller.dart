@@ -35,24 +35,24 @@ class SignupController extends GetxController {
   bool value = false;
   UserModel? userModel;
   String? tokenDevice;
-  getToken() async {
+  Future<void> getToken() async {
     FirebaseMessaging messaging = FirebaseMessaging.instance;
     tokenDevice = await messaging.getToken();
   }
-  changeValue(val) {
+  void changeValue(val) {
     value = val;
     update();
   }
   //+9665XXXXXXXX or 05XXXXXXXX
 
   String type = "";
-  changeTytpe(typeSelect) {
+  void changeTytpe(typeSelect) {
     type = typeSelect;
 
     update();
   }
 
-  showPassword_1() {
+  void showPassword_1() {
     if (showPass_1 == false) {
       showPass_1 = true;
       update();
@@ -62,7 +62,7 @@ class SignupController extends GetxController {
     }
   }
 
-  showPassword_2() {
+  void showPassword_2() {
     if (showPass_2 == false) {
       showPass_2 = true;
       update();
@@ -72,7 +72,7 @@ class SignupController extends GetxController {
     }
   }
 
-  emailValidate(String val, context) {
+  String? emailValidate(String val, context) {
     if (val.isEmpty) {
       return S.of(context).errorEmail_1;
     } else if (!val.isEmail) {
@@ -84,7 +84,7 @@ class SignupController extends GetxController {
     }
   }
 
-  passwordValidate(String val, context) {
+  String? passwordValidate(String val, context) {
     if (val.isEmpty) {
       return S.of(context).errorPass_1;
     } else if (val.length < 8) {
@@ -96,7 +96,7 @@ class SignupController extends GetxController {
     }
   }
 
-  passwordConfirmationValidate(String val, context) {
+  String? passwordConfirmationValidate(String val, context) {
     if (val.isEmpty) {
       return S.of(context).errorConfirmPass_1;
     } else if (passwordController.text != passwordConfirmationController.text) {
@@ -106,7 +106,7 @@ class SignupController extends GetxController {
     }
   }
 
-  phoneValidate(String val, context) {
+  String? phoneValidate(String val, context) {
     if (val.isEmpty) {
       return S.of(context).errorPhone_1;
     } else if (val.length == 8 && !val.startsWith("0")) {
@@ -128,7 +128,7 @@ class SignupController extends GetxController {
     }
   }
 
-  nameValidate(String val, context) {
+  String? nameValidate(String val, context) {
     if (val.isEmpty) {
       return S.of(context).errorUserName_1;
     } else if (val.length < 3) {
@@ -140,12 +140,12 @@ class SignupController extends GetxController {
     }
   }
 
-  checkValue(val) {
+  void checkValue(val) {
     choose = val;
     update();
   }
 
-  messageHandleException(message, context) {
+  void messageHandleException(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -183,7 +183,7 @@ class SignupController extends GetxController {
         ));
   }
 
-  messageHandleNotVerify(message, context) {
+  void messageHandleNotVerify(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -223,7 +223,7 @@ class SignupController extends GetxController {
         ));
   }
 
-  signUp(context) async {
+  Future<void> signUp(context) async {
     if (signUpGlobalKey.currentState!.validate() &&
         choose == true &&
         type != "") {
@@ -300,7 +300,7 @@ class SignupController extends GetxController {
     update();
   }
 
-  messageSuccsessSign() {
+  void messageSuccsessSign() {
     Get.defaultDialog(
         backgroundColor: LightMode.whiteColor,
         title: "",

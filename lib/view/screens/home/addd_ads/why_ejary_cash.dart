@@ -39,10 +39,10 @@ class WhyEjaryCash extends StatelessWidget {
                   itemCount: controller.informationList.length,
                   itemBuilder: (context, index) => infoWidget(
                       index == 0 || index == 3 || index == 6
-                          ? LightMode.greenColor.withOpacity(.5)
+                          ? LightMode.greenColor.withValues(alpha: .5)
                           : index == 1 || index == 4 || index == 7
-                              ? LightMode.blueColor.withOpacity(.3)
-                              : LightMode.yellowColor.withOpacity(.3),
+                              ? LightMode.blueColor.withValues(alpha: .3)
+                              : LightMode.yellowColor.withValues(alpha: .3),
                       controller.informationList[index].featureImage,
                       controller.informationList[index].title,
                       controller.informationList[index].text),
@@ -152,7 +152,7 @@ Widget infoWidget(color, icon, title, body) {
                 overflow: TextOverflow.ellipsis,
                 body,
                 style: GoogleFonts.tajawal(
-                    color: LightMode.blackColor.withOpacity(.4),
+                    color: LightMode.blackColor.withValues(alpha: .4),
                     fontSize: 4.w,
                     fontWeight: FontWeight.w600),
               ),

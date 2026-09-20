@@ -17,7 +17,7 @@ class ContactController extends GetxController {
   StatuesRequest statuesRequest = StatuesRequest.none;
 
   SettingRemoteData settingRemoteData = SettingRemoteData(Get.put(Api()));
-  messageHandleException(message, context) {
+  void messageHandleException(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -54,7 +54,7 @@ class ContactController extends GetxController {
           ],
         ));
   }
-  messageHandleExceptionVisitor(message, context) {
+  void messageHandleExceptionVisitor(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -90,7 +90,7 @@ class ContactController extends GetxController {
           ],
         ));
   }
-  getSetting(context) async {
+  Future<void> getSetting(context) async {
     statuesRequest = StatuesRequest.loading;
     update();
     var response = await settingRemoteData.getSetting();

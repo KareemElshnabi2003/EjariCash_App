@@ -43,7 +43,7 @@ class MonthlyEjarCalcController extends GetxController {
   MonthluEjarRemoteData monthluEjarRemoteData =
       MonthluEjarRemoteData(Get.put(Api()));
   StatuesRequest statuesRequest = StatuesRequest.none;
-  changeValJop(val) {
+  void changeValJop(val) {
     typeJop = val;
     if (typeJop == "خاصة") {
       job = "private";
@@ -56,7 +56,7 @@ class MonthlyEjarCalcController extends GetxController {
     update();
   }
 
-  changeValeducation(val) {
+  void changeValeducation(val) {
     education = val;
     if (education == "المدرسة الثانوية") {
       educationId = "1";
@@ -74,7 +74,7 @@ class MonthlyEjarCalcController extends GetxController {
     update();
   }
 
-  changeTytpe_1(typeSelect) {
+  void changeTytpe_1(typeSelect) {
     type1 = typeSelect;
     if (type1 == "سعودي") {
       nationality = 'saudi';
@@ -84,7 +84,7 @@ class MonthlyEjarCalcController extends GetxController {
     update();
   }
 
-  changeTytpe_2(typeSelect) {
+  void changeTytpe_2(typeSelect) {
     type2 = typeSelect;
     if (type2 == "نعم") {
       married = 'yes';
@@ -94,7 +94,7 @@ class MonthlyEjarCalcController extends GetxController {
     update();
   }
 
-  monthSalleryValidate(String val) {
+  String? monthSalleryValidate(String val) {
     if (val.isEmpty) {
       return S.of(Get.context!).validateEnterSalary;
     } else {
@@ -102,7 +102,7 @@ class MonthlyEjarCalcController extends GetxController {
     }
   }
 
-  monthlyDemandsValidate(String val) {
+  String? monthlyDemandsValidate(String val) {
     if (val.isEmpty) {
       return S.of(Get.context!).validateDemands;
     } else if (val.isNum) {
@@ -113,7 +113,7 @@ class MonthlyEjarCalcController extends GetxController {
     }
   }
 
-  ageeValidate(String val) {
+  String? ageeValidate(String val) {
     if (val.isEmpty) {
       return S.of(Get.context!).validateAge_1;
     } else if (val.startsWith("0")) {
@@ -136,7 +136,7 @@ class MonthlyEjarCalcController extends GetxController {
     }
   }
 
-  numOfFamilyValidate(String val) {
+  String? numOfFamilyValidate(String val) {
     if (val.isEmpty) {
       return S.of(Get.context!).validateNumOfFamily;
     } else {
@@ -144,7 +144,7 @@ class MonthlyEjarCalcController extends GetxController {
     }
   }
 
-  messageHandleException(message, context) {
+  void messageHandleException(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -182,7 +182,7 @@ class MonthlyEjarCalcController extends GetxController {
         ));
   }
 
-  messageHandleExceptionVisitor(message, context) {
+  void messageHandleExceptionVisitor(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -220,7 +220,7 @@ class MonthlyEjarCalcController extends GetxController {
         ));
   }
 
-  computeMonthluEjar(context) async {
+  Future<void> computeMonthluEjar(context) async {
     if (formGlobalKey.currentState!.validate()) {
       statuesRequest = StatuesRequest.loading;
       update();

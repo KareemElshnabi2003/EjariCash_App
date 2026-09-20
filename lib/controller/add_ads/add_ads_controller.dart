@@ -28,7 +28,7 @@ class AddAdsController extends GetxController {
   String typeUser = '';
   String typeChoose = '';
 
-  changeChoose(data) {
+  void changeChoose(data) {
     if (data == "1") {
       choose_1 = true;
       choose_2 = false;
@@ -44,7 +44,7 @@ class AddAdsController extends GetxController {
     }
   }
 
-  changeType(data) {
+  void changeType(data) {
     if (data == "owner") {
       owner = true;
       broker = false;
@@ -80,7 +80,7 @@ class AddAdsController extends GetxController {
 
   TextEditingController insurancePriceController = TextEditingController();
 
-  addressAdsValidator(String val) {
+  String? addressAdsValidator(String val) {
     if (val.isEmpty) {
       return S.of(Get.context!).validateAddress;
     } else {
@@ -88,7 +88,7 @@ class AddAdsController extends GetxController {
     }
   }
 
-  numberOfdeadValidator(val) {
+  String? numberOfdeadValidator(val) {
     if (val.isEmpty) {
       return S.of(Get.context!).validateDeedNum;
     } else {
@@ -96,7 +96,7 @@ class AddAdsController extends GetxController {
     }
   }
 
-  areaNumberValidator(val) {
+  String? areaNumberValidator(val) {
     if (val.isEmpty) {
       return S.of(Get.context!).validateAreaNum;
     } else {
@@ -104,7 +104,7 @@ class AddAdsController extends GetxController {
     }
   }
 
-  descriptionAdsValidator(val) {
+  String? descriptionAdsValidator(val) {
     if (val.isEmpty) {
       return S.of(Get.context!).validateDiscripe;
     } else {
@@ -112,7 +112,7 @@ class AddAdsController extends GetxController {
     }
   }
 
-  postaNumValidator(val) {
+  String? postaNumValidator(val) {
     if (val.isEmpty) {
       return S.of(Get.context!).validatePostCode;
     } else {
@@ -120,7 +120,7 @@ class AddAdsController extends GetxController {
     }
   }
 
-  numberOhBuildingValidator(val) {
+  String? numberOhBuildingValidator(val) {
     if (val.isEmpty) {
       return S.of(Get.context!).validateNumAds;
     } else {
@@ -136,23 +136,23 @@ class AddAdsController extends GetxController {
   //   }
   // }
 
-  streetWidthValidator(val) {
+  String? streetWidthValidator(val) {
     if (val.isEmpty) {
-      return S.of(Get.context!)..validateWidthStreet;
+      return S.of(Get.context!).validateWidthStreet;
     } else {
       return null;
     }
   }
 
-  yearPriceValidator(val) {
+  String? yearPriceValidator(val) {
     if (val.isEmpty) {
-      return S.of(Get.context!)..validateYearRent;
+      return S.of(Get.context!).validateYearRent;
     } else {
       return null;
     }
   }
 
-  insurancePriceValidator(val) {
+  String? insurancePriceValidator(val) {
     if (val.isEmpty) {
       return S.of(Get.context!).validateInsurance;
     } else {
@@ -161,7 +161,7 @@ class AddAdsController extends GetxController {
   }
 
   String? face;
-  changeFace(val) {
+  void changeFace(val) {
     face = val;
     update();
   }
@@ -171,7 +171,7 @@ class AddAdsController extends GetxController {
   //add ads owner
 
   String? typeBroker;
-  changeTypeBroker(val) {
+  void changeTypeBroker(val) {
     typeBroker = val;
     update();
   }
@@ -179,7 +179,7 @@ class AddAdsController extends GetxController {
   TextEditingController numberAuthController = TextEditingController();
   TextEditingController adsNumberController = TextEditingController();
   TextEditingController numberOffFalController = TextEditingController();
-  numberAuthValidator(val) {
+  String? numberAuthValidator(val) {
     if (val.isEmpty) {
       return S.of(Get.context!).validateAuthNum;
     } else {
@@ -187,7 +187,7 @@ class AddAdsController extends GetxController {
     }
   }
 
-  companyNameValidator(val) {
+  String? companyNameValidator(val) {
     if (val.isEmpty) {
       return S.of(Get.context!).validateCompanyName;
     } else {
@@ -195,7 +195,7 @@ class AddAdsController extends GetxController {
     }
   }
 
-  adsNumberValidator(val) {
+  String? adsNumberValidator(val) {
     if (val.isEmpty) {
       return S.of(Get.context!).validateNumAds;
     } else {
@@ -203,7 +203,7 @@ class AddAdsController extends GetxController {
     }
   }
 
-  numberOffFalValidator(val) {
+  Null numberOffFalValidator(val) {
     return null;
   }
 
@@ -214,7 +214,7 @@ class AddAdsController extends GetxController {
   TextEditingController liftsNumController = TextEditingController();
   TextEditingController loginWayController = TextEditingController();
   TextEditingController additionalPrivacyController = TextEditingController();
-  roomNumValidator(val) {
+  String? roomNumValidator(val) {
     if (val.isEmpty) {
       return S.of(Get.context!).validateRoomNum;
     } else {
@@ -222,7 +222,7 @@ class AddAdsController extends GetxController {
     }
   }
 
-  bathRoomNumValidator(val) {
+  String? bathRoomNumValidator(val) {
     if (val.isEmpty) {
       return S.of(Get.context!).validateBathroomNum;
     } else {
@@ -230,7 +230,7 @@ class AddAdsController extends GetxController {
     }
   }
 
-  parkingNumValidator(val) {
+  String? parkingNumValidator(val) {
     if (val.isEmpty) {
       return S.of(Get.context!).validateParkingNum;
     } else {
@@ -238,7 +238,7 @@ class AddAdsController extends GetxController {
     }
   }
 
-  liftsNumValidator(val) {
+  String? liftsNumValidator(val) {
     if (val.isEmpty) {
       return S.of(Get.context!).vaildateLiftesNum;
     } else {
@@ -246,7 +246,7 @@ class AddAdsController extends GetxController {
     }
   }
 
-  loginWayValidator(val) {
+  String? loginWayValidator(val) {
     if (val.isEmpty) {
       return S.of(Get.context!).validateLoginWay;
     } else {
@@ -254,7 +254,7 @@ class AddAdsController extends GetxController {
     }
   }
 
-  additionalPrivacyValidator(val) {
+  String? additionalPrivacyValidator(val) {
     if (val.isEmpty) {
       return S.of(Get.context!).validateAdditionalTerms;
     } else {
@@ -281,12 +281,12 @@ class AddAdsController extends GetxController {
   ];
 
   List preferesEjar = ["عزاب", "عوائل", "3"];
-  changeProparty(val) {
+  void changeProparty(val) {
     propartyAge = val;
     update();
   }
 
-  changePrefer(val) {
+  void changePrefer(val) {
     preferEjar = val;
     update();
   }
@@ -307,97 +307,97 @@ class AddAdsController extends GetxController {
   bool facilities_13 = false;
   bool facilities_14 = false;
 
-  changeFacilities_1(val, data) {
+  void changeFacilities_1(val, data) {
     facilities_1 = val;
     facilitesList.add(data);
     update();
   }
 
-  changeFacilities_2(val, data) {
+  void changeFacilities_2(val, data) {
     facilities_2 = val;
     facilitesList.add(data);
 
     update();
   }
 
-  changeFacilities_3(val, data) {
+  void changeFacilities_3(val, data) {
     facilities_3 = val;
     facilitesList.add(data);
 
     update();
   }
 
-  changeFacilities_4(val, data) {
+  void changeFacilities_4(val, data) {
     facilities_4 = val;
     facilitesList.add(data);
 
     update();
   }
 
-  changeFacilities_5(val, data) {
+  void changeFacilities_5(val, data) {
     facilities_5 = val;
     facilitesList.add(data);
 
     update();
   }
 
-  changeFacilities_6(val, data) {
+  void changeFacilities_6(val, data) {
     facilities_6 = val;
     facilitesList.add(data);
 
     update();
   }
 
-  changeFacilities_7(val, data) {
+  void changeFacilities_7(val, data) {
     facilities_7 = val;
     facilitesList.add(data);
 
     update();
   }
 
-  changeFacilities_8(val, data) {
+  void changeFacilities_8(val, data) {
     facilities_8 = val;
     facilitesList.add(data);
 
     update();
   }
 
-  changeFacilities_9(val, data) {
+  void changeFacilities_9(val, data) {
     facilities_9 = val;
     facilitesList.add(data);
 
     update();
   }
 
-  changeFacilities_10(val, data) {
+  void changeFacilities_10(val, data) {
     facilities_10 = val;
     facilitesList.add(data);
 
     update();
   }
 
-  changeFacilities_11(val, data) {
+  void changeFacilities_11(val, data) {
     facilities_11 = val;
     facilitesList.add(data);
 
     update();
   }
 
-  changeFacilities_12(val, data) {
+  void changeFacilities_12(val, data) {
     facilities_12 = val;
     facilitesList.add(data);
 
     update();
   }
 
-  changeFacilities_13(val, data) {
+  void changeFacilities_13(val, data) {
     facilities_13 = val;
     facilitesList.add(data);
 
     update();
   }
 
-  changeFacilities_14(val, data) {
+  void changeFacilities_14(val, data) {
     facilities_14 = val;
     facilitesList.add(data);
 
@@ -423,7 +423,7 @@ class AddAdsController extends GetxController {
     update();
   }
 
-  deletImage() {
+  void deletImage() {
     image = null;
     imagerequest = '';
     update();
@@ -455,13 +455,13 @@ class AddAdsController extends GetxController {
     update();
   }
 
-  deletMultyImage(index) {
+  void deletMultyImage(index) {
     images.removeAt(index);
     imagesFiles.removeAt(index);
     update();
   }
 
-  showMessageSuccsess() {
+  void showMessageSuccsess() {
     Get.defaultDialog(
         title: S.of(Get.context!).warning,
         titleStyle: TextStyle(
@@ -490,7 +490,7 @@ class AddAdsController extends GetxController {
   StatuesRequest statuesRequest = StatuesRequest.none;
   AdsRemoteData adsRemoteData = AdsRemoteData(Get.put(Api()));
 
-  messageHandleException(message, context) {
+  void messageHandleException(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -528,7 +528,7 @@ class AddAdsController extends GetxController {
         ));
   }
 
-  nextButtonBroker_1() {
+  void nextButtonBroker_1() {
     if (formBrokerPage1Key.currentState!.validate()) {
       Get.to(() => const AddAdsInfo2(),
           transition: Transition.leftToRightWithFade,
@@ -536,7 +536,7 @@ class AddAdsController extends GetxController {
     }
   }
 
-  nextButtonOwner_1() {
+  void nextButtonOwner_1() {
     if (formOwnerPage1Key.currentState!.validate()) {
       Get.to(() => const AddAdsInfo2(),
           transition: Transition.leftToRightWithFade,
@@ -544,7 +544,7 @@ class AddAdsController extends GetxController {
     }
   }
 
-  nextButton_2() {
+  void nextButton_2() {
     if (formPage2Key.currentState!.validate()) {
       Get.to(() => const AddAdsInfo3(),
           transition: Transition.leftToRightWithFade,
@@ -552,7 +552,7 @@ class AddAdsController extends GetxController {
     }
   }
 
-  addAdsBroker(context) async {
+  Future<void> addAdsBroker(context) async {
     // sharedPreferences!.clear();
     // log(facilitesList.toString());
     // log(typeBroker!);
@@ -621,7 +621,7 @@ class AddAdsController extends GetxController {
     update();
   }
 
-  addAdsOwner(context) async {
+  Future<void> addAdsOwner(context) async {
     statuesRequest = StatuesRequest.loading;
     update();
     var response = await adsRemoteData.addAdsOwner(
@@ -697,7 +697,7 @@ class AddAdsController extends GetxController {
   int? categoryId;
 
   SettingRemoteData settingRemoteData = SettingRemoteData(Get.put(Api()));
-  changeCity(val) {
+  void changeCity(val) {
     cityName = val;
     //  partenerId = val.id.toString();
     getDistricts(Get.context);
@@ -705,14 +705,14 @@ class AddAdsController extends GetxController {
     update();
   }
 
-  changeCategory(val) {
+  void changeCategory(val) {
     categoryName = val;
     //  partenerId = val.id.toString();
 
     update();
   }
 
-  changeArea(val) {
+  void changeArea(val) {
     areaName = val;
 
     getCities(Get.context);
@@ -722,13 +722,13 @@ class AddAdsController extends GetxController {
     update();
   }
 
-  changeDistrict(val) {
+  void changeDistrict(val) {
     districtName = val;
 
     update();
   }
 
-  getDistricts(context) async {
+  Future<void> getDistricts(context) async {
     districtsList.clear();
     districtName = null;
     districtId = null;
@@ -763,7 +763,7 @@ class AddAdsController extends GetxController {
     update();
   }
 
-  getCities(context) async {
+  Future<void> getCities(context) async {
     citiesList.clear();
     cityName = null;
     cityId = null;
@@ -798,7 +798,7 @@ class AddAdsController extends GetxController {
     update();
   }
 
-  messageHandleExceptionVisitor(message, context) {
+  void messageHandleExceptionVisitor(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -836,7 +836,7 @@ class AddAdsController extends GetxController {
         ));
   }
 
-  getAreas(context) async {
+  Future<void> getAreas(context) async {
     statuesRequest = StatuesRequest.loading;
     update();
     var response = await settingRemoteData.getAreas();
@@ -868,7 +868,7 @@ class AddAdsController extends GetxController {
     update();
   }
 
-  getCategories(context) async {
+  Future<void> getCategories(context) async {
     statuesRequest = StatuesRequest.loading;
     update();
     var response = await settingRemoteData.getCategories();

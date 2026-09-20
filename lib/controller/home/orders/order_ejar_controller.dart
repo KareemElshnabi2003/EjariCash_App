@@ -19,7 +19,7 @@ class OrderEjarController extends GetxController {
 
   StatuesRequest statuesRequest_4 = StatuesRequest.none;
   RentRemoteData rentRemoteData = RentRemoteData(Get.put(Api()));
-  messageHandleExceptionVisitor(message, context) {
+  void messageHandleExceptionVisitor(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -57,7 +57,7 @@ class OrderEjarController extends GetxController {
         ));
   }
 
-  messageHandleException(message, context) {
+  void messageHandleException(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(

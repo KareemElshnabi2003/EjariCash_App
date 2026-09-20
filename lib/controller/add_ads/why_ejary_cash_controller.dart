@@ -16,7 +16,7 @@ class WhyEjaryCashController extends GetxController {
   WhyEjaryRemoteData whyEjaryRemoteData = WhyEjaryRemoteData(Get.put(Api()));
   List<InformationModel> informationList = [];
 
-  messageHandleException(message, context) {
+  void messageHandleException(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -54,7 +54,7 @@ class WhyEjaryCashController extends GetxController {
         ));
   }
 
-  getInformation(context) async {
+  Future<void> getInformation(context) async {
     print("1");
     informationList.clear();
     statuesRequest = StatuesRequest.loading;
@@ -88,7 +88,7 @@ class WhyEjaryCashController extends GetxController {
     }
     update();
   }
-  messageHandleExceptionVisitor(message, context) {
+  void messageHandleExceptionVisitor(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(

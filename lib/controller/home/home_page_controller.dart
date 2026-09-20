@@ -33,7 +33,7 @@ class HomePageController extends GetxController {
   List<AdsOwnerModel> allAdsOwner = [];
   List<OrderInfoModel> myRentes = [];
 
-  messageHandleExceptionVisitor(message, context) {
+  void messageHandleExceptionVisitor(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -106,7 +106,7 @@ class HomePageController extends GetxController {
     return allProjects;
   }
 
-  messageHandleException(message, context) {
+  void messageHandleException(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(

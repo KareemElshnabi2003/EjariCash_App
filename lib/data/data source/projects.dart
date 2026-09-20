@@ -5,7 +5,7 @@ import 'package:ejary_cash/main.dart';
 class ProjectsRemoteData {
   Api api;
   ProjectsRemoteData(this.api);
-  getAllProjects(token) async {
+  Future<dynamic> getAllProjects(token) async {
     var response = await api.getData(
         AppLinks.getAllProjectsLink,
         {"Accept": "application/json",         "Lang":sharedPreferences!.getString("local")=="en"?"en":"ar",
@@ -13,7 +13,7 @@ class ProjectsRemoteData {
        );
     return response.fold((l) => l, (r) => r);
   }
-getProjectsForPartener(partenerId,token) async {
+Future<dynamic> getProjectsForPartener(partenerId,token) async {
     var response = await api.getData(
         "${AppLinks.getProjectsForPartener}${partenerId}/projects",
      

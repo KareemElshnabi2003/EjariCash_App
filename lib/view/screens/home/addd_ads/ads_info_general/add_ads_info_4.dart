@@ -155,7 +155,7 @@ Widget btnClick(title, onPress, colorText, colorBorder, colorBackGround) {
       decoration: BoxDecoration(
          gradient: LinearGradient(colors: [
             LightMode.blueColor,
-            LightMode.blueColor.withOpacity(.8),
+            LightMode.blueColor.withValues(alpha: .8),
           ]),
           border: Border.all(color: colorBorder, width: 2),
           borderRadius: BorderRadius.circular(7.w),

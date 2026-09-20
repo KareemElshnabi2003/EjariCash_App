@@ -5,7 +5,7 @@ import 'package:ejary_cash/main.dart';
 class FavouriteRemoteData {
   Api api;
   FavouriteRemoteData(this.api);
-  addAndDeleteFav(adsId, token) async {
+  Future<dynamic> addAndDeleteFav(adsId, token) async {
     var response = await api.postData("${AppLinks.addAndDeleteFav}$adsId", {
       "Accept": "application/json",
       "Lang": sharedPreferences!.getString("local") == "en" ? "en" : "ar",
@@ -15,7 +15,7 @@ class FavouriteRemoteData {
     return response.fold((l) => l, (r) => r);
   }
 
-  getFavouriteItems(token) async {
+  Future<dynamic> getFavouriteItems(token) async {
     var response = await api.getData(
       AppLinks.getFavouriteItems,
       {

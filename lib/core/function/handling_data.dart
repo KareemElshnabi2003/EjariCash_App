@@ -2,7 +2,7 @@
 
 import '../class/status_request.dart';
 
-handlingData(response) {
+StatuesRequest handlingData(response) {
   if (response is StatuesRequest) {
     return response;
   } else if (response is String) {

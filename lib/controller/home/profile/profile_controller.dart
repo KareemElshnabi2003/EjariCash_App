@@ -5,7 +5,6 @@ import 'package:ejary_cash/core/function/handling_data.dart';
 import 'package:ejary_cash/data/data%20source/register.dart';
 import 'package:ejary_cash/generated/l10n.dart';
 import 'package:ejary_cash/main.dart';
-import 'package:ejary_cash/view/screens/auth/login/login.dart';
 import 'package:ejary_cash/view/screens/auth/register/main_register.dart';
 import 'package:ejary_cash/view/screens/on_boarding.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +18,7 @@ class ProfileController extends GetxController {
   String typeUser = sharedPreferences!.getString("typeOfUser") == "مستأجر"
       ? "مستأجر"
       : "مالك";
-  changLang(lang) async {
+  Future<void> changLang(lang) async {
     if (lang == "ar") {
       await sharedPreferences!.setString("local", "ar");
       Get.updateLocale(const Locale("ar"));
@@ -33,7 +32,7 @@ class ProfileController extends GetxController {
     }
   }
 
-  changeTytpe(typeSelect) {
+  void changeTytpe(typeSelect) {
     if (typeSelect == "مستأجر") {
       sharedPreferences!.setString("typeOfUser", "مستأجر");
       typeUser = "مستأجر";
@@ -44,7 +43,7 @@ class ProfileController extends GetxController {
     update();
   }
 
-  changeUser() {
+  void changeUser() {
     if (typeUser == "مالك") {
       sharedPreferences!.setString("typeOfUser", "مالك");
     } else {
@@ -53,7 +52,7 @@ class ProfileController extends GetxController {
     update();
   }
 
-  messageHandleExceptionVisitor(message, context) {
+  void messageHandleExceptionVisitor(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -91,7 +90,7 @@ class ProfileController extends GetxController {
         ));
   }
 
-  messageHandleException(message, context) {
+  void messageHandleException(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -129,7 +128,7 @@ class ProfileController extends GetxController {
         ));
   }
 
-  logOut(context) async {
+  Future<void> logOut(context) async {
     statuesRequest = StatuesRequest.loading;
     update();
     var response =
@@ -161,7 +160,7 @@ class ProfileController extends GetxController {
     update();
   }
 
-  messageLogOut() {
+  void messageLogOut() {
     Get.defaultDialog(
         title: S.of(Get.context!).messageLogout,
         titleStyle: TextStyle(

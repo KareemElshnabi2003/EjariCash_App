@@ -5,7 +5,7 @@ import 'package:ejary_cash/main.dart';
 class OnBoardingRemoteData {
   Api api;
   OnBoardingRemoteData(this.api);
-  getInfo() async {
+  Future<dynamic> getInfo() async {
     var response = await api.getData(
       AppLinks.onBoardingInfo,
       {"Accept": "application/json",          "Lang":sharedPreferences!.getString("local")=="en"?"en":"ar",

@@ -93,13 +93,13 @@ class Login extends StatelessWidget {
                                         ? Icon(
                                             Icons.visibility,
                                             color: LightMode.blueColor
-                                                .withOpacity(.5),
+                                                .withValues(alpha: .5),
                                             size: 7.w,
                                           )
                                         : Icon(
                                             Icons.visibility_off,
                                             color: LightMode.blueColor
-                                                .withOpacity(.5),
+                                                .withValues(alpha: .5),
                                             size: 7.w,
                                           )), (val) {
                               return controller.passwordValidate(val!, context);
@@ -170,7 +170,7 @@ Widget textFailed(controller, keyBoardType, obscure, hintText, bool iconic,
         labelStyle: GoogleFonts.tajawal(
             fontSize: 5.w,
             fontWeight: FontWeight.w700,
-            color: LightMode.blueColor.withOpacity(.5)),
+            color: LightMode.blueColor.withValues(alpha: .5)),
         contentPadding: EdgeInsets.only(
           bottom: 5.w,
           right: 5.w,
@@ -204,7 +204,7 @@ Widget btnClick(title, onPress, colorText, colorBorder, colorBackGround) {
       decoration: BoxDecoration(
          gradient: LinearGradient(colors: [
             LightMode.blueColor,
-            LightMode.blueColor.withOpacity(.8),
+            LightMode.blueColor.withValues(alpha: .8),
           ]),
           border: Border.all(color: colorBorder, width: 2),
           borderRadius: BorderRadius.circular(7.w),
@@ -236,7 +236,7 @@ Widget appBarLogin(onPressBack, text, onClickSkip, context) {
                 decoration: BoxDecoration(
                    gradient: LinearGradient(colors: [
             LightMode.blueColor,
-            LightMode.blueColor.withOpacity(.8),
+            LightMode.blueColor.withValues(alpha: .8),
           ]),
                     borderRadius: BorderRadius.circular(3.w),
                     color: LightMode.blueColor),

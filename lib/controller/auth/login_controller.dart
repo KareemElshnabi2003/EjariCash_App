@@ -28,13 +28,13 @@ class LoginController extends GetxController {
   bool showPass_1 = true;
   UserModel? userModel;
   String? tokenDevice;
-  getToken() async {
+  Future<void> getToken() async {
     FirebaseMessaging messaging = FirebaseMessaging.instance;
     tokenDevice = await messaging.getToken();
   }
   //+9665XXXXXXXX or 05XXXXXXXX
 
-  showPassword_1() {
+  void showPassword_1() {
     if (showPass_1 == false) {
       showPass_1 = true;
       update();
@@ -44,7 +44,7 @@ class LoginController extends GetxController {
     }
   }
 
-  emailValidate(String val, context) {
+  String? emailValidate(String val, context) {
     if (val.isEmpty) {
       return S.of(context).errorEmail_1;
     } else if (!val.isEmail) {
@@ -56,7 +56,7 @@ class LoginController extends GetxController {
     }
   }
 
-  passwordValidate(String val, context) {
+  String? passwordValidate(String val, context) {
     if (val.isEmpty) {
       return S.of(context).errorPass_1;
     } else if (val.length < 8) {
@@ -68,7 +68,7 @@ class LoginController extends GetxController {
     }
   }
 
-  messageHandleException(message, context) {
+  void messageHandleException(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -106,7 +106,7 @@ class LoginController extends GetxController {
         ));
   }
 
-  messageHandleNotVerify(message, context) {
+  void messageHandleNotVerify(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -145,7 +145,7 @@ class LoginController extends GetxController {
         ));
   }
 
-  login(context) async {
+  Future<void> login(context) async {
     if (loginGlobalKey.currentState!.validate()) {
       statuesRequest = StatuesRequest.loading;
       update();

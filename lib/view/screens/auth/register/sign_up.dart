@@ -105,13 +105,13 @@ class SignUp extends StatelessWidget {
                                         ? Icon(
                                             Icons.visibility,
                                             color: LightMode.blueColor
-                                                .withOpacity(.5),
+                                                .withValues(alpha: .5),
                                             size: 6.w,
                                           )
                                         : Icon(
                                             Icons.visibility_off,
                                             color: LightMode.blueColor
-                                                .withOpacity(.5),
+                                                .withValues(alpha: .5),
                                             size: 6.w,
                                           )), (val) {
                               return controller.passwordValidate(val!, context);
@@ -137,13 +137,13 @@ class SignUp extends StatelessWidget {
                                         ? Icon(
                                             Icons.visibility,
                                             color: LightMode.blueColor
-                                                .withOpacity(.5),
+                                                .withValues(alpha: .5),
                                             size: 6.w,
                                           )
                                         : Icon(
                                             Icons.visibility_off,
                                             color: LightMode.blueColor
-                                                .withOpacity(.5),
+                                                .withValues(alpha: .5),
                                             size: 6.w,
                                           )), (val) {
                               return controller.passwordConfirmationValidate(
@@ -440,7 +440,7 @@ Widget textFailed(controller, keyBoardType, obscure, hintText, bool iconic,
         labelStyle: GoogleFonts.tajawal(
             fontSize: 5.w,
             fontWeight: FontWeight.w700,
-            color: LightMode.blueColor.withOpacity(.5)),
+            color: LightMode.blueColor.withValues(alpha: .5)),
         suffixIcon: iconic == true ? icon : null,
         suffixIconColor: LightMode.blueColor),
   );
@@ -459,7 +459,7 @@ Widget appBarSign(onPressBack, text) {
             decoration: BoxDecoration(
                gradient: LinearGradient(colors: [
             LightMode.blueColor,
-            LightMode.blueColor.withOpacity(.8),
+            LightMode.blueColor.withValues(alpha: .8),
           ]),
                 borderRadius: BorderRadius.circular(3.w),
                 color: LightMode.blueColor),
@@ -512,7 +512,7 @@ Widget btnClick(title, onPress, colorText, colorBorder, colorBackGround) {
       decoration: BoxDecoration(
           gradient: LinearGradient(colors: [
             LightMode.blueColor,
-            LightMode.blueColor.withOpacity(.8),
+            LightMode.blueColor.withValues(alpha: .8),
           ]),
           border: Border.all(color: colorBorder, width: 2),
           borderRadius: BorderRadius.circular(7.w),

@@ -7,7 +7,7 @@ import 'package:ejary_cash/main.dart';
 class AdsRemoteData {
   Api api;
   AdsRemoteData(this.api);
-  getAllAds() async {
+  Future<dynamic> getAllAds() async {
     var response = await api.getData(
       AppLinks.getAllUnitesLink,
       {"Accept": "application/json",  "Lang": sharedPreferences!.getString("local")=="en"?"en":"ar",},
@@ -15,7 +15,7 @@ class AdsRemoteData {
     return response.fold((l) => l, (r) => r);
   }
 
-  getAllAdsOwner(token) async {
+  Future<dynamic> getAllAdsOwner(token) async {
     var response = await api.getData(
       AppLinks.getAllUnitesOwnerLink,
       {
@@ -26,7 +26,7 @@ class AdsRemoteData {
     return response.fold((l) => l, (r) => r);
   }
 
-  getAdsHome(token) async {
+  Future<dynamic> getAdsHome(token) async {
     var response = await api.getData(
       AppLinks.getAdsHomeLink,
       {
@@ -37,7 +37,7 @@ class AdsRemoteData {
   }
 
   //report
-  makeReport(String token, String id, String reson, String message) async {
+  Future<dynamic> makeReport(String token, String id, String reson, String message) async {
     var response = await api.postData("${AppLinks.makeReportLink}/$id/report", {
       "Accept": "application/json",
  "Lang": sharedPreferences!.getString("local")=="en"?"en":"ar",      'authorization': 'Bearer $token',
@@ -50,7 +50,7 @@ class AdsRemoteData {
   }
 
   //filter ads
-  filterAds(String token, String priceType, String numRoom, fromPrice,
+  Future<dynamic> filterAds(String token, String priceType, String numRoom, fromPrice,
       toPrice) async {
     var response = await api.getData(
         numRoom == "0"
@@ -64,7 +64,7 @@ class AdsRemoteData {
     return response.fold((l) => l, (r) => r);
   }
 
-  filterAdsOwner(String token, String priceType, String numRoom, fromPrice,
+  Future<dynamic> filterAdsOwner(String token, String priceType, String numRoom, fromPrice,
       toPrice) async {
     var response = await api.getData(
         numRoom == "0"
@@ -79,7 +79,7 @@ class AdsRemoteData {
   }
 
   //add ads
-  addAdsOwner(
+  Future<dynamic> addAdsOwner(
       String token,
       String typeAds,
       String nameAds,
@@ -141,7 +141,7 @@ class AdsRemoteData {
     return response.fold((l) => l, (r) => r);
   }
 
-  addAdsBroker(
+  Future<dynamic> addAdsBroker(
       String token,
       String typeAds,
       String nameAds,

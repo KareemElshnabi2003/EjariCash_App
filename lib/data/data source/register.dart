@@ -5,7 +5,7 @@ import 'package:ejary_cash/main.dart';
 class RegisterRemoteData {
   Api api;
   RegisterRemoteData(this.api);
-  login(email,password,tokenDevice) async {
+  Future<dynamic> login(email,password,tokenDevice) async {
     var response = await api.postData(AppLinks.loginLink, {
       "Accept":"application/json",
             "Lang":sharedPreferences!.getString("local")=="en"?"en":"ar",
@@ -21,7 +21,7 @@ class RegisterRemoteData {
     return response.fold((l) => l, (r) => r);
   }
   //register
-   signup(name,email,password,passwordConfirmation,mobile,tokenDevice) async {
+   Future<dynamic> signup(name,email,password,passwordConfirmation,mobile,tokenDevice) async {
     var response = await api.postData(AppLinks.registerLink,  {
       "Accept":"application/json",
       "Lang":sharedPreferences!.getString("local")=="en"?"en":"ar",
@@ -40,7 +40,7 @@ class RegisterRemoteData {
     return response.fold((l) => l, (r) => r);
   }
   //verify
-   verifyCode(email,code) async {
+   Future<dynamic> verifyCode(email,code) async {
     var response = await api.postData(AppLinks.verifyCodeLink,  {
       "Accept":"application/json",
             "Lang":sharedPreferences!.getString("local")=="en"?"en":"ar",
@@ -54,7 +54,7 @@ class RegisterRemoteData {
     });
     return response.fold((l) => l, (r) => r);
   }
-   verifyCodeForgetPass(email,code) async {
+   Future<dynamic> verifyCodeForgetPass(email,code) async {
     var response = await api.postData(AppLinks.verifyCodeForgetPassLink,  {
       "Accept":"application/json",
             "Lang":sharedPreferences!.getString("local")=="en"?"en":"ar",
@@ -68,7 +68,7 @@ class RegisterRemoteData {
     });
     return response.fold((l) => l, (r) => r);
   }
-  verifyCodeActivate(email,code) async {
+  Future<dynamic> verifyCodeActivate(email,code) async {
     var response = await api.postData(AppLinks.verifyCodeActivateLink,  {
       "Accept":"application/json",
             "Lang":sharedPreferences!.getString("local")=="en"?"en":"ar",
@@ -82,7 +82,7 @@ class RegisterRemoteData {
     });
     return response.fold((l) => l, (r) => r);
   }
-   resendCode(email) async {
+   Future<dynamic> resendCode(email) async {
     var response = await api.postData(AppLinks.resendCodeLink,  {
       "Accept":"application/json",
             "Lang":sharedPreferences!.getString("local")=="en"?"en":"ar",
@@ -96,7 +96,7 @@ class RegisterRemoteData {
     return response.fold((l) => l, (r) => r);
   }
 //logout
-logOut(token) async {
+Future<dynamic> logOut(token) async {
     var response = await api.postData(AppLinks.logOutLink,  {
       "Accept":"application/json",
             'authorization': 'Bearer $token',
@@ -113,7 +113,7 @@ logOut(token) async {
   }
 
  //update profile
-  updateProfile(token,name,birthDate,bio,linkedIn) async {
+  Future<dynamic> updateProfile(token,name,birthDate,bio,linkedIn) async {
     var response = await api.postData(AppLinks.updateProfileLink,  {
       "Accept":"application/json",
       "Lang":sharedPreferences!.getString("local")=="en"?"en":"ar",
@@ -132,7 +132,7 @@ logOut(token) async {
   }
   
 //delete account
-deleteAccount(token,password) async {
+Future<dynamic> deleteAccount(token,password) async {
     var response = await api.postData(AppLinks.deleteAccountLink,  {
       "Accept":"application/json",
       "Lang":sharedPreferences!.getString("local")=="en"?"en":"ar",
@@ -147,7 +147,7 @@ deleteAccount(token,password) async {
     return response.fold((l) => l, (r) => r);
   }
 //change password
-changePassword(token,currentPassword,newPass,confirmPass) async {
+Future<dynamic> changePassword(token,currentPassword,newPass,confirmPass) async {
     var response = await api.postData(AppLinks.changePasswordLink,  {
       "Accept":"application/json",
       "Lang":sharedPreferences!.getString("local")=="en"?"en":"ar",
@@ -163,7 +163,7 @@ changePassword(token,currentPassword,newPass,confirmPass) async {
     return response.fold((l) => l, (r) => r);
   }
 
-resetPass(email,newPass,confirmPass) async {
+Future<dynamic> resetPass(email,newPass,confirmPass) async {
     var response = await api.postData(AppLinks.addNewPassLink,  {
       "Accept":"application/json",
       "Lang":sharedPreferences!.getString("local")=="en"?"en":"ar",
@@ -177,7 +177,7 @@ resetPass(email,newPass,confirmPass) async {
     });
     return response.fold((l) => l, (r) => r);
   }
-  forgetPass(email) async {
+  Future<dynamic> forgetPass(email) async {
     var response = await api.postData(AppLinks.forgetPassLink,  {
       "Accept":"application/json",
       "Lang":sharedPreferences!.getString("local")=="en"?"en":"ar",
@@ -192,7 +192,7 @@ resetPass(email,newPass,confirmPass) async {
     return response.fold((l) => l, (r) => r);
   }
   //get user data
-  getUserData(token) async {
+  Future<dynamic> getUserData(token) async {
     var response = await api.getData(AppLinks.getUserInfo,  {
       "Accept":"application/json",
        "Lang":sharedPreferences!.getString("local")=="en"?"en":"ar",      'authorization': 'Bearer $token',

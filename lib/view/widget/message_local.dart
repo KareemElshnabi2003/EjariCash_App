@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:screen_go/extensions/responsive_nums.dart';
 
-messageLocale(onPressEn,onPressAr) {
+void messageLocale(onPressEn,onPressAr) {
   Get.defaultDialog(
       title: "",
       titlePadding: EdgeInsets.zero,

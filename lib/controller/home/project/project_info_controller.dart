@@ -19,7 +19,7 @@ class ProjectInfoController extends GetxController {
   ProjectsRemoteData projectsRemoteData = ProjectsRemoteData(Get.put(Api()));
   List<ProjectModel> allProjectForPartener = [];
   String? id;
-  getAllProjects(context) async {
+  Future<void> getAllProjects(context) async {
     allProjectForPartener.clear();
     statuesRequest = StatuesRequest.loading;
     update();
@@ -53,7 +53,7 @@ class ProjectInfoController extends GetxController {
     }
     update();
   }
-  messageHandleExceptionVisitor(message, context) {
+  void messageHandleExceptionVisitor(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(
@@ -90,7 +90,7 @@ class ProjectInfoController extends GetxController {
         ));
   }
 
-  messageHandleException(message, context) {
+  void messageHandleException(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
         content: Column(

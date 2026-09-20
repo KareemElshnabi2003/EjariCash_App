@@ -5,7 +5,7 @@ import 'package:ejary_cash/main.dart';
 class MonthluEjarRemoteData {
   Api api;
   MonthluEjarRemoteData(this.api);
-  monthlyEjar( token,familyNum,jopType,salary,nationality,marriage,age,monthlyObligations,education) async {
+  Future<dynamic> monthlyEjar( token,familyNum,jopType,salary,nationality,marriage,age,monthlyObligations,education) async {
     var response = await api.postData(AppLinks.monthlyEjarLink, {
       "Accept": "application/json",
       "Lang":sharedPreferences!.getString("local")=="en"?"en":"ar",
