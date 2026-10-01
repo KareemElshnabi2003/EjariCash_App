@@ -30,3 +30,5 @@ class MonthluEjarRemoteData {
     return response.fold((l) => l, (r) => r);
   }
 }
+
+typedef MonthlyEjarRemoteData = MonthluEjarRemoteData;

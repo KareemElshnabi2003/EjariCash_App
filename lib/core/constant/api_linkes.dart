@@ -27,6 +27,7 @@ class AppLinks {
 
   static String getAllProjectsLink = "$serverLink/partners";
   static String getProjectsForPartener = "$serverLink/partners/";
+  static String getProjectsForPartner = getProjectsForPartener;
 
   //unites  && ads
   static String getAllUnitesLink = "$serverLink/ads";

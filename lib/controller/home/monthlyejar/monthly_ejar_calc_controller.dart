@@ -220,6 +220,8 @@ class MonthlyEjarCalcController extends GetxController {
         ));
   }
 
+  Future<void> computeMonthlyEjar(context) => computeMonthluEjar(context);
+
   Future<void> computeMonthluEjar(context) async {
     if (formGlobalKey.currentState!.validate()) {
       statuesRequest = StatuesRequest.loading;

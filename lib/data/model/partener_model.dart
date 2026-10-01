@@ -34,3 +34,5 @@ class PartenerModel {
     return data;
   }
 }
+
+typedef PartnerModel = PartenerModel;

@@ -18,6 +18,8 @@ enum StatuesRequest{
   unprocessableException,
 }
 
+typedef StatusRequest = StatuesRequest;
+
 //success
 //loading
 //No internet connection. Please check your connection and try again.
