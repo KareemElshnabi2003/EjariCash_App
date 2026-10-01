@@ -61,6 +61,8 @@ class LoginController extends GetxController {
     return null;
   }
 
+  String? passwordValidate(String val, context) => passValidate(val, context);
+
   void messageHandleException(message, context) {
     Get.defaultDialog(
       title: S.of(context).error,

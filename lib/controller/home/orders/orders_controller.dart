@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:ejary_cash/controller/home/notification/notify_controller.dart';
 import 'package:ejary_cash/core/class/api.dart';
 import 'package:ejary_cash/core/class/status_request.dart';
 import 'package:ejary_cash/core/constant/colors.dart';

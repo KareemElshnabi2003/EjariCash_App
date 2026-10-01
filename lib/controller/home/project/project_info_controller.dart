@@ -10,7 +10,6 @@ import 'package:ejary_cash/view/screens/auth/register/main_register.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:path/path.dart';
 import 'package:screen_go/extensions/responsive_nums.dart';
 import 'package:url_launcher/url_launcher.dart';
 

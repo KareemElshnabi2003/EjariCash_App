@@ -132,7 +132,6 @@ class ForgetPassController extends GetxController {
       statuesRequest = handlingData(response);
 
       if (statuesRequest == StatuesRequest.success) {
-        dynamic responseBody = response['data'];
         await sharedPreferences!
             .setString("email", emailController.text.trim());
         sharedPreferences!.setString("pageStart", "verifyForget");

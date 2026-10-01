@@ -51,7 +51,7 @@ class UserModel {
     countryCode = json['country_code']?.toString();
     mobile = json['mobile']?.toString();
     status = json['status']?.toString();
-    code = json['code'] != null ? json['code'].toString() : null;
+    code = json['code']?.toString();
     emailVerifiedAt = json['email_verified_at']?.toString();
     birthdate = json['birthdate']?.toString();
     linkedinLink = json['linkedin_link']?.toString();
@@ -63,7 +63,7 @@ class UserModel {
     ownerAdsCount = json['owner_ads_count'] != null ? json['owner_ads_count'].toString() : "0";
     ownerFavAdsCount = json['owner_fav_ads_count'] != null ? json['owner_fav_ads_count'].toString() : "0";
     ownerViewsAdsCount = json['owner_views_ads_count'] != null ? json['owner_views_ads_count'].toString() : "0";
-    monthlyRent = json['monthly_rent'] != null ? json['monthly_rent'].toString() : null;
+    monthlyRent = json['monthly_rent']?.toString();
   }
 
   Map<String, dynamic> toJson() {

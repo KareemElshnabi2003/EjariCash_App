@@ -26,7 +26,7 @@ class VerifyCodeActivate extends StatelessWidget {
       backgroundColor: LightMode.whiteColor,
       body: OfflineBuilder(
         connectivityBuilder: (context, List<ConnectivityResult> value, child) {
-          final bool connected = value != ConnectivityResult.none;
+          final bool connected = !value.contains(ConnectivityResult.none);
 
           if (connected) {
             return GetBuilder<VerifyCodeController>(
