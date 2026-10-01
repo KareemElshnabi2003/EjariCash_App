@@ -23,7 +23,7 @@ class ForgetPassController extends GetxController {
   TextEditingController passwordConfirmationController =
       TextEditingController();
   StatuesRequest statuesRequest = StatuesRequest.none;
-  RegisterRemoteData registerRemoteData = RegisterRemoteData(Get.put(Api()));
+  RegisterRemoteData registerRemoteData = RegisterRemoteData(Get.find<Api>());
   bool showPass_1 = true;
   bool showPass_2 = true;
 
@@ -133,8 +133,8 @@ class ForgetPassController extends GetxController {
 
       if (statuesRequest == StatuesRequest.success) {
         dynamic responseBody = response['data'];
-        print("response :: $responseBody");
-
+        await sharedPreferences!
+            .setString("email", emailController.text.trim());
         sharedPreferences!.setString("pageStart", "verifyForget");
 
         Get.to(() => const VerifyCodeForgetPass(),
@@ -202,5 +202,13 @@ class ForgetPassController extends GetxController {
       }
     }
     update();
+  }
+
+  @override
+  void onClose() {
+    emailController.dispose();
+    passwordController.dispose();
+    passwordConfirmationController.dispose();
+    super.onClose();
   }
 }

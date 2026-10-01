@@ -7,10 +7,14 @@ import 'package:ejary_cash/main.dart';
 class AdsRemoteData {
   Api api;
   AdsRemoteData(this.api);
+
   Future<dynamic> getAllAds() async {
     var response = await api.getData(
       AppLinks.getAllUnitesLink,
-      {"Accept": "application/json",  "Lang": sharedPreferences!.getString("local")=="en"?"en":"ar",},
+      {
+        "Accept": "application/json",
+        "Lang": sharedPreferences?.getString("local") == "en" ? "en" : "ar",
+      },
     );
     return response.fold((l) => l, (r) => r);
   }
@@ -20,27 +24,34 @@ class AdsRemoteData {
       AppLinks.getAllUnitesOwnerLink,
       {
         "Accept": "application/json",
- "Lang": sharedPreferences!.getString("local")=="en"?"en":"ar",        'authorization': 'Bearer $token',
+        "Lang": sharedPreferences?.getString("local") == "en" ? "en" : "ar",
+        if (token != null && token.toString().isNotEmpty)
+          'Authorization': 'Bearer $token',
       },
     );
     return response.fold((l) => l, (r) => r);
   }
 
-  Future<dynamic> getAdsHome(token) async {
+  Future<dynamic> getAdsHome([String? token]) async {
     var response = await api.getData(
       AppLinks.getAdsHomeLink,
       {
         "Accept": "application/json",
- "Lang": sharedPreferences!.getString("local")=="en"?"en":"ar",      },
+        "Lang": sharedPreferences?.getString("local") == "en" ? "en" : "ar",
+        if (token != null && token.isNotEmpty)
+          'Authorization': 'Bearer $token',
+      },
     );
     return response.fold((l) => l, (r) => r);
   }
 
   //report
-  Future<dynamic> makeReport(String token, String id, String reson, String message) async {
+  Future<dynamic> makeReport(
+      String token, String id, String reson, String message) async {
     var response = await api.postData("${AppLinks.makeReportLink}/$id/report", {
       "Accept": "application/json",
- "Lang": sharedPreferences!.getString("local")=="en"?"en":"ar",      'authorization': 'Bearer $token',
+      "Lang": sharedPreferences?.getString("local") == "en" ? "en" : "ar",
+      'Authorization': 'Bearer $token',
       'Content-Type': 'application/json; charset=UTF-8'
     }, {
       "reason": reson,
@@ -50,31 +61,67 @@ class AdsRemoteData {
   }
 
   //filter ads
-  Future<dynamic> filterAds(String token, String priceType, String numRoom, fromPrice,
-      toPrice) async {
+  Future<dynamic> filterAds(String token, String priceType, String numRoom,
+      fromPrice, toPrice) async {
+    final Map<String, dynamic> query = {
+      'in_home': 'no',
+      if (priceType.trim().isNotEmpty) 'price_type': priceType.trim(),
+      if (fromPrice != null && fromPrice.toString().trim().isNotEmpty)
+        'from_price': fromPrice.toString().trim(),
+      if (toPrice != null && toPrice.toString().trim().isNotEmpty)
+        'to_price': toPrice.toString().trim(),
+    };
+    if (numRoom != "0" && numRoom.isNotEmpty) {
+      if (numRoom.contains('=')) {
+        final parts = numRoom.split('=');
+        query[parts[0]] = parts[1];
+      } else {
+        query['bedrooms_no'] = numRoom;
+      }
+    }
+
     var response = await api.getData(
-        numRoom == "0"
-            ? "${AppLinks.getAllUnitesLink}?in_home=no&price_type=$priceType &from_price=$fromPrice&to_price=$toPrice"
-            : "${AppLinks.getAllUnitesLink}?in_home=no&price_type=$priceType&$numRoom&from_price=$fromPrice&to_price=$toPrice",
-        {
-          "Accept": "application/json",
- "Lang": sharedPreferences!.getString("local")=="en"?"en":"ar",          // 'authorization': 'Bearer $token',
-          'Content-Type': 'application/json; charset=UTF-8'
-        });
+      AppLinks.getAllUnitesLink,
+      {
+        "Accept": "application/json",
+        "Lang": sharedPreferences?.getString("local") == "en" ? "en" : "ar",
+        if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json; charset=UTF-8'
+      },
+      queryParameters: query,
+    );
     return response.fold((l) => l, (r) => r);
   }
 
-  Future<dynamic> filterAdsOwner(String token, String priceType, String numRoom, fromPrice,
-      toPrice) async {
+  Future<dynamic> filterAdsOwner(String token, String priceType, String numRoom,
+      fromPrice, toPrice) async {
+    final Map<String, dynamic> query = {
+      'in_home': 'no',
+      if (priceType.trim().isNotEmpty) 'price_type': priceType.trim(),
+      if (fromPrice != null && fromPrice.toString().trim().isNotEmpty)
+        'from_price': fromPrice.toString().trim(),
+      if (toPrice != null && toPrice.toString().trim().isNotEmpty)
+        'to_price': toPrice.toString().trim(),
+    };
+    if (numRoom != "0" && numRoom.isNotEmpty) {
+      if (numRoom.contains('=')) {
+        final parts = numRoom.split('=');
+        query[parts[0]] = parts[1];
+      } else {
+        query['bedrooms_no'] = numRoom;
+      }
+    }
+
     var response = await api.getData(
-        numRoom == "0"
-            ? "${AppLinks.getAllUnitesOwnerLink}?in_home=no&price_type=$priceType&from_price=$fromPrice&to_price=$toPrice"
-            : "${AppLinks.getAllUnitesOwnerLink}?in_home=no&price_type=$priceType&$numRoom&from_price=$fromPrice&to_price=$toPrice",
-        {
-          "Accept": "application/json",
- "Lang": sharedPreferences!.getString("local")=="en"?"en":"ar",          'authorization': 'Bearer $token',
-          'Content-Type': 'application/json; charset=UTF-8'
-        });
+      AppLinks.getAllUnitesOwnerLink,
+      {
+        "Accept": "application/json",
+        "Lang": sharedPreferences?.getString("local") == "en" ? "en" : "ar",
+        if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json; charset=UTF-8'
+      },
+      queryParameters: query,
+    );
     return response.fold((l) => l, (r) => r);
   }
 
@@ -194,7 +241,7 @@ class AdsRemoteData {
           "property_age": propertyAge,
           "renter_preference": renterPrefere,
           "additional_conditions": additionPrivacy,
-          "facilities[]": facilites.join(", "),
+          "facilities[]": facilites,
           "login_by": loginWay,
           "id_number": idNum,
           "broker_type": brokerType,

@@ -12,30 +12,38 @@ class AdsInfoController extends GetxController {
   String htmlData = "";
 
   Future<void> fetchHetState() async {
-    htmlData = adsModel!.description ?? "";
+    htmlData = adsModel?.description ?? "";
     update();
   }
 
   void setFav() {
-    if (isFav == false) {
-      isFav = true;
-      update();
-    } else {
-      isFav = false;
-      update();
-    }
+    isFav = !isFav;
+    update();
   }
 
   @override
   void onInit() {
-    ads = Get.arguments["AdsInfo"];
+    if (Get.arguments is Map && Get.arguments["AdsInfo"] != null) {
+      final rawAds = Get.arguments["AdsInfo"];
+      if (rawAds is Map<String, dynamic>) {
+        ads = rawAds;
+      } else if (rawAds is Map) {
+        ads = Map<String, dynamic>.from(rawAds);
+      }
+    }
 
-    sharedPreferences!.getString("typeOfUser") == "مستأجر"
-        ? adsModel = AdsModel.fromJson(ads)
-        : adsOwnerModel = AdsOwnerModel.fromJson(ads);
-    sharedPreferences!.getString("typeOfUser") == "مستأجر"
-        ? fetchHetState()
-        : null;
+    final userType = sharedPreferences?.getString("typeOfUser");
+    final bool isTenant = userType == "tenant" || userType == "مستأجر";
+
+    if (ads.isNotEmpty) {
+      if (isTenant) {
+        adsModel = AdsModel.fromJson(ads);
+        fetchHetState();
+      } else {
+        adsOwnerModel = AdsOwnerModel.fromJson(ads);
+      }
+    }
+
     super.onInit();
   }
 }

@@ -13,7 +13,7 @@ import 'package:screen_go/extensions/responsive_nums.dart';
 
 class OrdersOwnerController extends GetxController {
   StatuesRequest statuesRequest = StatuesRequest.none;
-  RegisterRemoteData registerRemoteData = RegisterRemoteData(Get.put(Api()));
+  RegisterRemoteData registerRemoteData = RegisterRemoteData(Get.find<Api>());
 
   UserModel? userModel;
   void messageHandleException(message, context) {

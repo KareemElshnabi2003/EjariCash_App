@@ -27,7 +27,7 @@ class SignupController extends GetxController {
   TextEditingController userNameController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   StatuesRequest statuesRequest = StatuesRequest.none;
-  RegisterRemoteData registerRemoteData = RegisterRemoteData(Get.put(Api()));
+  RegisterRemoteData registerRemoteData = RegisterRemoteData(Get.find<Api>());
   VerifyCodeController controller = Get.put(VerifyCodeController());
   bool choose = false;
   bool showPass_1 = true;
@@ -36,8 +36,12 @@ class SignupController extends GetxController {
   UserModel? userModel;
   String? tokenDevice;
   Future<void> getToken() async {
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-    tokenDevice = await messaging.getToken();
+    try {
+      FirebaseMessaging messaging = FirebaseMessaging.instance;
+      tokenDevice = await messaging.getToken();
+    } catch (_) {
+      tokenDevice = null;
+    }
   }
   void changeValue(val) {
     value = val;
@@ -260,11 +264,17 @@ class SignupController extends GetxController {
         sharedPreferences!
             .setString("accountType", "${userModel!.accountType}");
         sharedPreferences!.setString("status", "${userModel!.status}");
-        sharedPreferences!.setString("typeOfUser", type);
+        final role = (type == "مالك" ||
+                type == "owner" ||
+                userModel!.accountType == "مالك" ||
+                userModel!.accountType == "owner")
+            ? "owner"
+            : "tenant";
+        sharedPreferences!.setString("typeOfUser", role);
         sharedPreferences!.setBool("visit", false);
-        sharedPreferences!.setString("fav", userModel!.ownerFavAdsCount!);
-        sharedPreferences!.setString("countAds", userModel!.ownerAdsCount!);
-        sharedPreferences!.setString("view", userModel!.ownerViewsAdsCount!);
+        sharedPreferences!.setString("fav", userModel?.ownerFavAdsCount ?? "0");
+        sharedPreferences!.setString("countAds", userModel?.ownerAdsCount ?? "0");
+        sharedPreferences!.setString("view", userModel?.ownerViewsAdsCount ?? "0");
 
         sharedPreferences!.setString("pageStart", "verifyRegister");
         // sharedPreferences!.setString("pageStart", "Home");
@@ -316,5 +326,15 @@ class SignupController extends GetxController {
     Timer(const Duration(milliseconds: 2000), () {
       Get.offAll(() => const Home());
     });
+  }
+
+  @override
+  void onClose() {
+    emailController.dispose();
+    passwordController.dispose();
+    passwordConfirmationController.dispose();
+    userNameController.dispose();
+    phoneController.dispose();
+    super.onClose();
   }
 }

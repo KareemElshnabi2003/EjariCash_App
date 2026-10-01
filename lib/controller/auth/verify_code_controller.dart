@@ -18,12 +18,20 @@ import 'package:screen_go/extensions/responsive_nums.dart';
 
 class VerifyCodeController extends GetxController {
   StatuesRequest statuesRequest = StatuesRequest.none;
-  RegisterRemoteData registerRemoteData = RegisterRemoteData(Get.put(Api()));
+  RegisterRemoteData registerRemoteData = RegisterRemoteData(Get.find<Api>());
   UserModel? userModel;
   String? verifyCodeRegister;
   String? verifyCodeForgetPass;
-
   String? verifyCodeActivate;
+  Timer? _successTimer;
+
+  bool _isValidOtp(String? code) {
+    if (code == null) return false;
+    final trimmed = code.trim();
+    return trimmed.isNotEmpty &&
+        trimmed.length >= 4 &&
+        RegExp(r'^\d+$').hasMatch(trimmed);
+  }
 
   void messageHandleException(message, context) {
     Get.defaultDialog(
@@ -64,20 +72,20 @@ class VerifyCodeController extends GetxController {
   }
 
   Future<void> verifyRegister(context) async {
-    if (verifyCodeRegister != null) {
+    final email = sharedPreferences?.getString("email")?.trim();
+    if (email == null || email.isEmpty) {
+      messageHandleException(S.of(context).errorEmail_1, context);
+      return;
+    }
+
+    if (_isValidOtp(verifyCodeRegister)) {
       statuesRequest = StatuesRequest.loading;
       update();
       var response = await registerRemoteData.verifyCode(
-          sharedPreferences!.getString("email"), verifyCodeRegister);
-      print(response);
-      print(sharedPreferences!.getString("email"));
-      print(verifyCodeRegister);
+          email, verifyCodeRegister!.trim());
 
       statuesRequest = handlingData(response);
       if (statuesRequest == StatuesRequest.success) {
-        dynamic responseBody = response['data'];
-        print("response :: $responseBody");
-
         sharedPreferences!.setString("pageStart", "Home");
         messageSuccsessSign();
       } else if (statuesRequest == StatuesRequest.unprocessableException) {
@@ -104,22 +112,22 @@ class VerifyCodeController extends GetxController {
   }
 
   Future<void> verifyForgetPass(context) async {
-    print(verifyCodeForgetPass);
-    if (verifyCodeForgetPass != null) {
+    final email = sharedPreferences?.getString("email")?.trim();
+    if (email == null || email.isEmpty) {
+      messageHandleException(S.of(context).errorEmail_1, context);
+      return;
+    }
+
+    if (_isValidOtp(verifyCodeForgetPass)) {
       statuesRequest = StatuesRequest.loading;
       update();
       var response = await registerRemoteData.verifyCodeForgetPass(
-          sharedPreferences!.getString("email"), verifyCodeForgetPass);
-      print(response);
-      print(sharedPreferences!.getString("email"));
-      print(verifyCodeForgetPass);
+          email, verifyCodeForgetPass!.trim());
 
       statuesRequest = handlingData(response);
       if (statuesRequest == StatuesRequest.success) {
-        dynamic responseBody = response['data'];
-        print("response :: $responseBody");
-
-        sharedPreferences!.setString("pageStart", "Home");
+        // Set state to resetPassword, NOT Home!
+        sharedPreferences!.setString("pageStart", "resetPassword");
         Get.to(() => const AddNewPassword());
       } else if (statuesRequest == StatuesRequest.unprocessableException) {
         messageHandleException("${response['message']}", context);
@@ -145,20 +153,20 @@ class VerifyCodeController extends GetxController {
   }
 
   Future<void> verifyActivate(context) async {
-    if (verifyCodeActivate != null) {
+    final email = sharedPreferences?.getString("email")?.trim();
+    if (email == null || email.isEmpty) {
+      messageHandleException(S.of(context).errorEmail_1, context);
+      return;
+    }
+
+    if (_isValidOtp(verifyCodeActivate)) {
       statuesRequest = StatuesRequest.loading;
       update();
       var response = await registerRemoteData.verifyCodeActivate(
-          sharedPreferences!.getString("email"), verifyCodeActivate);
-      print(response);
-      print(sharedPreferences!.getString("email"));
-      print(verifyCodeForgetPass);
+          email, verifyCodeActivate!.trim());
 
       statuesRequest = handlingData(response);
       if (statuesRequest == StatuesRequest.success) {
-        dynamic responseBody = response['data'];
-        print("response :: $responseBody");
-
         sharedPreferences!.setString("pageStart", "mainRegister");
         Get.offAll(() => const Login());
       } else if (statuesRequest == StatuesRequest.unprocessableException) {
@@ -197,23 +205,23 @@ class VerifyCodeController extends GetxController {
               color: LightMode.blueColor),
         ),
         contentPadding: EdgeInsets.all(3.w));
-    Timer(const Duration(milliseconds: 2000), () {
+    _successTimer?.cancel();
+    _successTimer = Timer(const Duration(milliseconds: 2000), () {
       Get.offAll(() => const Home());
     });
   }
 
   Future<void> resendCode(context) async {
+    final email = sharedPreferences?.getString("email")?.trim();
+    if (email == null || email.isEmpty) return;
+
     statuesRequest = StatuesRequest.loading;
     update();
-    var response = await registerRemoteData
-        .resendCode(sharedPreferences!.getString("email"));
-    print(response);
-    print(sharedPreferences!.getString("email"));
+    var response = await registerRemoteData.resendCode(email);
 
     statuesRequest = handlingData(response);
     if (statuesRequest == StatuesRequest.success) {
-      Map<String, dynamic> responseBody = response['data'];
-      print("response :: $responseBody");
+      Map<String, dynamic> responseBody = response['data'] ?? {};
       userModel = UserModel.fromJson(responseBody);
     } else if (statuesRequest == StatuesRequest.unprocessableException) {
       messageHandleException("${response['message']}", context);
@@ -237,8 +245,8 @@ class VerifyCodeController extends GetxController {
   }
 
   @override
-  void onInit() {
-    print(sharedPreferences!.get("lang"));
-    super.onInit();
+  void onClose() {
+    _successTimer?.cancel();
+    super.onClose();
   }
 }

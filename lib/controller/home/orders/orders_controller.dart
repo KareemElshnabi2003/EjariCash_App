@@ -68,12 +68,12 @@ class OrdersController extends GetxController {
   int? cityId;
   String? areaName;
   int? areaId;
-  SettingRemoteData settingRemoteData = SettingRemoteData(Get.put(Api()));
-  ProjectsRemoteData projectsRemoteData = ProjectsRemoteData(Get.put(Api()));
+  SettingRemoteData settingRemoteData = SettingRemoteData(Get.find<Api>());
+  ProjectsRemoteData projectsRemoteData = ProjectsRemoteData(Get.find<Api>());
 
-  RentRemoteData rentRemoteData = RentRemoteData(Get.put(Api()));
+  RentRemoteData rentRemoteData = RentRemoteData(Get.find<Api>());
   StatuesRequest statuesRequest = StatuesRequest.none;
-  NotifyController notifyController = Get.put(NotifyController());
+  bool isSubmitting = false;
 
   List paymentPlans = ["دفعة واحدة", "دفعتان"];
   String? paymentPlan;
@@ -92,29 +92,16 @@ class OrdersController extends GetxController {
   }
 
   void computeMonthlyRent() {
-    monthRentController.text = paymentId == 2
-        ? ((double.parse(yearelyRentController.text == ""
-                        ? "0"
-                        : yearelyRentController.text) +
-                    (double.parse(yearelyRentController.text == ""
-                            ? "0"
-                            : yearelyRentController.text) /
-                        5)) /
-                12)
-            .toStringAsFixed(2)
-            .toString()
-        : ((double.parse(yearelyRentController.text == ""
-                        ? "0"
-                        : yearelyRentController.text) +
-                    (double.parse(yearelyRentController.text == ""
-                            ? "0"
-                            : yearelyRentController.text) *
-                        0.35)) /
-                12)
-            .toStringAsFixed(2)
-            .toString();
-    log(monthRentController.text);
-
+    final rawText = yearelyRentController.text.trim();
+    final yearly = double.tryParse(rawText) ?? 0.0;
+    if (yearly <= 0) {
+      monthRentController.text = "0";
+      update();
+      return;
+    }
+    final rate = paymentId == 2 ? 0.20 : 0.35;
+    final monthly = (yearly + (yearly * rate)) / 12;
+    monthRentController.text = monthly.toStringAsFixed(2);
     update();
   }
 
@@ -126,9 +113,16 @@ class OrdersController extends GetxController {
   }
 
   void changePartener(val) {
-    partenerController = val;
-    //  partenerId = val.id.toString();
-
+    if (val is PartenerModel) {
+      partenerController = val.name;
+      partenerId = val.id;
+    } else {
+      partenerController = val?.toString();
+      try {
+        final found = partenerEjar.firstWhere((p) => p.name == val);
+        partenerId = found.id;
+      } catch (_) {}
+    }
     update();
   }
 
@@ -231,65 +225,7 @@ class OrdersController extends GetxController {
         ));
   }
 
-  void messageLogOut() {
-    Get.defaultDialog(
-        title: S.of(Get.context!).deleteAccount,
-        titleStyle: TextStyle(
-          fontSize: 6.w,
-          fontWeight: FontWeight.bold,
-        ),
-        titlePadding:
-            EdgeInsets.only(top: 2.h, right: 3.h, left: 3.h, bottom: 5.w),
-        middleText: S.of(Get.context!).bodyDeletAccount,
-        middleTextStyle: TextStyle(
-          fontSize: 4.w,
-        ),
-        confirm: Padding(
-          padding: EdgeInsets.symmetric(vertical: 4.w, horizontal: 4.w),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    fixedSize: Size(30.w, 5.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    side: const BorderSide(
-                      color: Color(0xff2e70b3),
-                    ),
-                  ),
-                  onPressed: () async {},
-                  child: Text(
-                    S.of(Get.context!).yesDelete,
-                    style: TextStyle(
-                        color: const Color(0xff2e70b3), fontSize: 4.w),
-                  )),
-              SizedBox(
-                width: 3.w,
-              ),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xfff2ad22),
-                    fixedSize: Size(30.w, 5.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    side: const BorderSide(
-                      color: Color(0xfff2ad22),
-                    ),
-                  ),
-                  onPressed: () {
-                    Get.back();
-                  },
-                  child: Text(
-                    S.of(Get.context!).cancel,
-                    style: TextStyle(color: Colors.white, fontSize: 4.w),
-                  )),
-            ],
-          ),
-        ));
-  }
+
 
   Future<void> getAllProjects(context) async {
     statuesRequest = StatuesRequest.loading;
@@ -512,150 +448,172 @@ class OrdersController extends GetxController {
   }
 
   Future<void> rentPartener(context) async {
+    if (isSubmitting) return;
     if (partenerRentKey.currentState!.validate()) {
-      log("$partenerId");
+      isSubmitting = true;
       statuesRequest = StatuesRequest.loading;
       update();
-      var response = await rentRemoteData.rentPartener(
-          sharedPreferences!.getString("token"),
-          partenerId,
-          yearelyRentController.text,
-          notesController.text,
-          dateOfMoveController.text,
-          linkLocationController.text);
-      print(" response ??? ${response}");
+      try {
+        var response = await rentRemoteData.rentPartener(
+            sharedPreferences!.getString("token"),
+            partenerId,
+            yearelyRentController.text,
+            notesController.text,
+            dateOfMoveController.text,
+            linkLocationController.text);
 
-      statuesRequest = handlingData(response);
+        statuesRequest = handlingData(response);
 
-      if (statuesRequest == StatuesRequest.success) {
-        dynamic responseBody = response;
-        print("response :: $responseBody");
-        Get.to(() => const ReviewOrder(),
-            transition: Transition.leftToRightWithFade,
-            duration: const Duration(milliseconds: 800));
-      } else if (statuesRequest == StatuesRequest.unprocessableException) {
-        messageHandleException("${response['message']}", context);
-      } else if (statuesRequest == StatuesRequest.socketException) {
-        messageHandleException(S.of(context).noInternetApi, context);
-      } else if (statuesRequest == StatuesRequest.serverException) {
-        messageHandleException(S.of(context).serverException, context);
-      } else if (statuesRequest == StatuesRequest.unExpectedException) {
-        messageHandleException(S.of(context).unExcepectedException, context);
-      } else if (statuesRequest == StatuesRequest.defaultException) {
-        messageHandleException(S.of(context).errorPhoneUseBeforeApi, context);
-      } else if (statuesRequest == StatuesRequest.serverError) {
-        messageHandleException(response, context);
-      } else if (statuesRequest == StatuesRequest.timeoutException) {
-        messageHandleException(S.of(context).timeOutException, context);
-      } else if (statuesRequest == StatuesRequest.unauthorizedException) {
-        messageHandleExceptionVisitor(S.of(context).errorUnAuthorized, context);
+        if (statuesRequest == StatuesRequest.success) {
+          Get.to(() => const ReviewOrder(),
+              transition: Transition.leftToRightWithFade,
+              duration: const Duration(milliseconds: 800));
+        } else if (statuesRequest == StatuesRequest.unprocessableException) {
+          messageHandleException("${response['message']}", context);
+        } else if (statuesRequest == StatuesRequest.socketException) {
+          messageHandleException(S.of(context).noInternetApi, context);
+        } else if (statuesRequest == StatuesRequest.serverException) {
+          messageHandleException(S.of(context).serverException, context);
+        } else if (statuesRequest == StatuesRequest.unExpectedException) {
+          messageHandleException(S.of(context).unExcepectedException, context);
+        } else if (statuesRequest == StatuesRequest.defaultException) {
+          messageHandleException(S.of(context).errorPhoneUseBeforeApi, context);
+        } else if (statuesRequest == StatuesRequest.serverError) {
+          messageHandleException(response, context);
+        } else if (statuesRequest == StatuesRequest.timeoutException) {
+          messageHandleException(S.of(context).timeOutException, context);
+        } else if (statuesRequest == StatuesRequest.unauthorizedException) {
+          messageHandleExceptionVisitor(S.of(context).errorUnAuthorized, context);
+        }
+      } finally {
+        isSubmitting = false;
+        update();
       }
-    } else {}
-    update();
+    }
   }
 
   Future<void> rentPersobal(context) async {
+    if (isSubmitting) return;
     if (personalRentKey.currentState!.validate()) {
-      log("$partenerId");
+      isSubmitting = true;
       statuesRequest = StatuesRequest.loading;
       update();
-      var response = await rentRemoteData.rentPersonal(
-          sharedPreferences!.getString("token"),
-          cityId,
-          yearelyRentController.text,
-          areaId,
-          phoneOwnerController.text,
-          notesController.text,
-          linkLocationController.text,
-          paymentPlan == "دفعة واحدة" ? "1" : "2",
-          nameController.text,
-          nameOwnerController.text,
-          type == "نعم" ? "yes" : "no");
-      print(" response ??? ${response}");
+      try {
+        var response = await rentRemoteData.rentPersonal(
+            sharedPreferences!.getString("token"),
+            cityId,
+            yearelyRentController.text,
+            areaId,
+            phoneOwnerController.text,
+            notesController.text,
+            linkLocationController.text,
+            paymentPlan == "دفعة واحدة" ? "1" : "2",
+            nameController.text,
+            nameOwnerController.text,
+            type == "نعم" ? "yes" : "no");
 
-      statuesRequest = handlingData(response);
+        statuesRequest = handlingData(response);
 
-      if (statuesRequest == StatuesRequest.success) {
-        dynamic responseBody = response;
-        print("response :: $responseBody");
-        notifyController.sendNotification(context);
-
-        Get.to(() => const ReviewOrder(),
-            transition: Transition.leftToRightWithFade,
-            duration: const Duration(milliseconds: 800));
-      } else if (statuesRequest == StatuesRequest.unprocessableException) {
-        messageHandleException("${response['message']}", context);
-      } else if (statuesRequest == StatuesRequest.socketException) {
-        messageHandleException(S.of(context).noInternetApi, context);
-      } else if (statuesRequest == StatuesRequest.serverException) {
-        messageHandleException(S.of(context).serverException, context);
-      } else if (statuesRequest == StatuesRequest.unExpectedException) {
-        messageHandleException(S.of(context).unExcepectedException, context);
-      } else if (statuesRequest == StatuesRequest.defaultException) {
-        messageHandleException(S.of(context).errorPhoneUseBeforeApi, context);
-      } else if (statuesRequest == StatuesRequest.serverError) {
-        messageHandleException(response, context);
-      } else if (statuesRequest == StatuesRequest.timeoutException) {
-        messageHandleException(S.of(context).timeOutException, context);
-      } else if (statuesRequest == StatuesRequest.unauthorizedException) {
-        messageHandleExceptionVisitor(S.of(context).errorUnAuthorized, context);
+        if (statuesRequest == StatuesRequest.success) {
+          Get.to(() => const ReviewOrder(),
+              transition: Transition.leftToRightWithFade,
+              duration: const Duration(milliseconds: 800));
+        } else if (statuesRequest == StatuesRequest.unprocessableException) {
+          messageHandleException("${response['message']}", context);
+        } else if (statuesRequest == StatuesRequest.socketException) {
+          messageHandleException(S.of(context).noInternetApi, context);
+        } else if (statuesRequest == StatuesRequest.serverException) {
+          messageHandleException(S.of(context).serverException, context);
+        } else if (statuesRequest == StatuesRequest.unExpectedException) {
+          messageHandleException(S.of(context).unExcepectedException, context);
+        } else if (statuesRequest == StatuesRequest.defaultException) {
+          messageHandleException(S.of(context).errorPhoneUseBeforeApi, context);
+        } else if (statuesRequest == StatuesRequest.serverError) {
+          messageHandleException(response, context);
+        } else if (statuesRequest == StatuesRequest.timeoutException) {
+          messageHandleException(S.of(context).timeOutException, context);
+        } else if (statuesRequest == StatuesRequest.unauthorizedException) {
+          messageHandleExceptionVisitor(S.of(context).errorUnAuthorized, context);
+        }
+      } finally {
+        isSubmitting = false;
+        update();
       }
-    } else {}
-    update();
+    }
   }
 
-  Future<void> rentOwnAds(context, adsId,yearlyRent) async {
-    log(adsId);
+  Future<void> rentOwnAds(context, adsId, yearlyRent) async {
+    if (isSubmitting) return;
     if (choose == true) {
+      if (ownAdsRentKey.currentState != null &&
+          !ownAdsRentKey.currentState!.validate()) {
+        return;
+      }
+      isSubmitting = true;
       statuesRequest = StatuesRequest.loading;
       update();
-      var response = await rentRemoteData.rentOwnAds(
-          sharedPreferences!.getString("token"),
-          dateOfMoveController.text,
-          nameController.text,
-          emailController.text,
-          phoneController.text,
-          adsId,yearlyRent);
-      print(" response ??? ${response}");
+      try {
+        var response = await rentRemoteData.rentOwnAds(
+            sharedPreferences!.getString("token"),
+            dateOfMoveController.text,
+            nameController.text,
+            emailController.text,
+            phoneController.text,
+            adsId,
+            yearlyRent);
 
-      statuesRequest = handlingData(response);
+        statuesRequest = handlingData(response);
 
-      if (statuesRequest == StatuesRequest.success) {
-        dynamic responseBody = response;
-        print("response :: $responseBody");
-        notifyController.sendNotification(context);
-        Get.to(() => const ReviewOrder(),
-            transition: Transition.leftToRightWithFade,
-            duration: const Duration(milliseconds: 800));
-      } else if (statuesRequest == StatuesRequest.unprocessableException) {
-        messageHandleException("${response['message']}", context);
-      } else if (statuesRequest == StatuesRequest.socketException) {
-        messageHandleException(S.of(context).noInternetApi, context);
-      } else if (statuesRequest == StatuesRequest.serverException) {
-        messageHandleException(S.of(context).serverException, context);
-      } else if (statuesRequest == StatuesRequest.unExpectedException) {
-        messageHandleException(S.of(context).unExcepectedException, context);
-      } else if (statuesRequest == StatuesRequest.defaultException) {
-        messageHandleException(S.of(context).errorPhoneUseBeforeApi, context);
-      } else if (statuesRequest == StatuesRequest.serverError) {
-        messageHandleException(response, context);
-      } else if (statuesRequest == StatuesRequest.timeoutException) {
-        messageHandleException(S.of(context).timeOutException, context);
-      } else if (statuesRequest == StatuesRequest.unauthorizedException) {
-        messageHandleExceptionVisitor(S.of(context).errorUnAuthorized, context);
+        if (statuesRequest == StatuesRequest.success) {
+          Get.to(() => const ReviewOrder(),
+              transition: Transition.leftToRightWithFade,
+              duration: const Duration(milliseconds: 800));
+        } else if (statuesRequest == StatuesRequest.unprocessableException) {
+          messageHandleException("${response['message']}", context);
+        } else if (statuesRequest == StatuesRequest.socketException) {
+          messageHandleException(S.of(context).noInternetApi, context);
+        } else if (statuesRequest == StatuesRequest.serverException) {
+          messageHandleException(S.of(context).serverException, context);
+        } else if (statuesRequest == StatuesRequest.unExpectedException) {
+          messageHandleException(S.of(context).unExcepectedException, context);
+        } else if (statuesRequest == StatuesRequest.defaultException) {
+          messageHandleException(S.of(context).errorPhoneUseBeforeApi, context);
+        } else if (statuesRequest == StatuesRequest.serverError) {
+          messageHandleException(response, context);
+        } else if (statuesRequest == StatuesRequest.timeoutException) {
+          messageHandleException(S.of(context).timeOutException, context);
+        } else if (statuesRequest == StatuesRequest.unauthorizedException) {
+          messageHandleExceptionVisitor(S.of(context).errorUnAuthorized, context);
+        }
+      } finally {
+        isSubmitting = false;
+        update();
       }
     } else {
       messageHandleException(S.of(Get.context!).errorConfirmPrivacy, context);
     }
-    update();
   }
 
   @override
   void onInit() {
-    // linkLocationController.text = "https://maps.app.goo.gl/noaAhN5neYAHrKRz8";
     getAllProjects(Get.context);
     getAreas(Get.context);
-
     super.onInit();
+  }
+
+  @override
+  void onClose() {
+    notesController.dispose();
+    linkLocationController.dispose();
+    phoneController.dispose();
+    nameOwnerController.dispose();
+    nameController.dispose();
+    emailController.dispose();
+    phoneOwnerController.dispose();
+    dateOfMoveController.dispose();
+    yearelyRentController.dispose();
+    monthRentController.dispose();
+    timeRentController.dispose();
+    super.onClose();
   }
 }

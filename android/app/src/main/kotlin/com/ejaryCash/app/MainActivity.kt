@@ -1,4 +1,4 @@
-package com.liveChat.app
+package com.ejaryCash.app
 
 import io.flutter.embedding.android.FlutterActivity
 

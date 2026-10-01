@@ -307,100 +307,97 @@ class AddAdsController extends GetxController {
   bool facilities_13 = false;
   bool facilities_14 = false;
 
+  void _toggleFacility(bool selected, String data) {
+    if (selected) {
+      if (!facilitesList.contains(data)) {
+        facilitesList.add(data);
+      }
+    } else {
+      facilitesList.remove(data);
+    }
+  }
+
   void changeFacilities_1(val, data) {
     facilities_1 = val;
-    facilitesList.add(data);
+    _toggleFacility(val, data);
     update();
   }
 
   void changeFacilities_2(val, data) {
     facilities_2 = val;
-    facilitesList.add(data);
-
+    _toggleFacility(val, data);
     update();
   }
 
   void changeFacilities_3(val, data) {
     facilities_3 = val;
-    facilitesList.add(data);
-
+    _toggleFacility(val, data);
     update();
   }
 
   void changeFacilities_4(val, data) {
     facilities_4 = val;
-    facilitesList.add(data);
-
+    _toggleFacility(val, data);
     update();
   }
 
   void changeFacilities_5(val, data) {
     facilities_5 = val;
-    facilitesList.add(data);
-
+    _toggleFacility(val, data);
     update();
   }
 
   void changeFacilities_6(val, data) {
     facilities_6 = val;
-    facilitesList.add(data);
-
+    _toggleFacility(val, data);
     update();
   }
 
   void changeFacilities_7(val, data) {
     facilities_7 = val;
-    facilitesList.add(data);
-
+    _toggleFacility(val, data);
     update();
   }
 
   void changeFacilities_8(val, data) {
     facilities_8 = val;
-    facilitesList.add(data);
-
+    _toggleFacility(val, data);
     update();
   }
 
   void changeFacilities_9(val, data) {
     facilities_9 = val;
-    facilitesList.add(data);
-
+    _toggleFacility(val, data);
     update();
   }
 
   void changeFacilities_10(val, data) {
     facilities_10 = val;
-    facilitesList.add(data);
-
+    _toggleFacility(val, data);
     update();
   }
 
   void changeFacilities_11(val, data) {
     facilities_11 = val;
-    facilitesList.add(data);
-
+    _toggleFacility(val, data);
     update();
   }
 
   void changeFacilities_12(val, data) {
     facilities_12 = val;
-    facilitesList.add(data);
-
+    _toggleFacility(val, data);
     update();
   }
 
   void changeFacilities_13(val, data) {
     facilities_13 = val;
-    facilitesList.add(data);
-
+    _toggleFacility(val, data);
     update();
   }
 
   void changeFacilities_14(val, data) {
     facilities_14 = val;
-    facilitesList.add(data);
-
+    _toggleFacility(val, data);
     update();
   }
 
@@ -410,17 +407,14 @@ class AddAdsController extends GetxController {
 
   Future getImageFromGallery() async {
     final returnImage =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+        await ImagePicker().pickImage(source: ImageSource.gallery, imageQuality: 85);
     if (returnImage == null) {
       return null;
     } else {
       image = File(returnImage.path);
       imagerequest = image!.path;
-      print(imagerequest);
-
       update();
     }
-    update();
   }
 
   void deletImage() {
@@ -436,23 +430,17 @@ class AddAdsController extends GetxController {
   List<String> images = [];
 
   Future getMultyImageFromGallery() async {
-    final returnImage =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (returnImage == null) {
-      return null;
-    } else {
-      multyImage = File(returnImage.path);
-      multyImagerequest = multyImage!.path;
-      print(multyImagerequest);
-
-      imagesFiles.add(multyImage!);
-      images.add(multyImagerequest);
-      print(imagesFiles);
-      print(images);
-
-      update();
-    }
-    update();
+    try {
+      final returnImages = await ImagePicker().pickMultiImage(imageQuality: 85);
+      if (returnImages.isNotEmpty) {
+        for (var img in returnImages) {
+          if (images.length >= 10) break;
+          imagesFiles.add(File(img.path));
+          images.add(img.path);
+        }
+        update();
+      }
+    } catch (_) {}
   }
 
   void deletMultyImage(index) {
@@ -460,6 +448,9 @@ class AddAdsController extends GetxController {
     imagesFiles.removeAt(index);
     update();
   }
+
+  Timer? _successTimer;
+  bool isSubmitting = false;
 
   void showMessageSuccsess() {
     Get.defaultDialog(
@@ -480,15 +471,21 @@ class AddAdsController extends GetxController {
           ),
         ));
 
-    Timer(const Duration(milliseconds: 1200), () {
-      Get.offAll(const Home());
+    _successTimer?.cancel();
+    _successTimer = Timer(const Duration(milliseconds: 1200), () {
+      Get.offAll(() => const Home());
     });
   }
 
 //Api
 
   StatuesRequest statuesRequest = StatuesRequest.none;
-  AdsRemoteData adsRemoteData = AdsRemoteData(Get.put(Api()));
+  StatuesRequest categoriesRequest = StatuesRequest.none;
+  StatuesRequest areasRequest = StatuesRequest.none;
+  StatuesRequest citiesRequest = StatuesRequest.none;
+  StatuesRequest districtsRequest = StatuesRequest.none;
+
+  AdsRemoteData adsRemoteData = AdsRemoteData(Get.find<Api>());
 
   void messageHandleException(message, context) {
     Get.defaultDialog(
@@ -529,7 +526,7 @@ class AddAdsController extends GetxController {
   }
 
   void nextButtonBroker_1() {
-    if (formBrokerPage1Key.currentState!.validate()) {
+    if (formBrokerPage1Key.currentState?.validate() ?? false) {
       Get.to(() => const AddAdsInfo2(),
           transition: Transition.leftToRightWithFade,
           duration: const Duration(milliseconds: 800));
@@ -537,7 +534,7 @@ class AddAdsController extends GetxController {
   }
 
   void nextButtonOwner_1() {
-    if (formOwnerPage1Key.currentState!.validate()) {
+    if (formOwnerPage1Key.currentState?.validate() ?? false) {
       Get.to(() => const AddAdsInfo2(),
           transition: Transition.leftToRightWithFade,
           duration: const Duration(milliseconds: 800));
@@ -545,7 +542,7 @@ class AddAdsController extends GetxController {
   }
 
   void nextButton_2() {
-    if (formPage2Key.currentState!.validate()) {
+    if (formPage2Key.currentState?.validate() ?? false) {
       Get.to(() => const AddAdsInfo3(),
           transition: Transition.leftToRightWithFade,
           duration: const Duration(milliseconds: 800));
@@ -553,131 +550,132 @@ class AddAdsController extends GetxController {
   }
 
   Future<void> addAdsBroker(context) async {
-    // sharedPreferences!.clear();
-    // log(facilitesList.toString());
-    // log(typeBroker!);
-    // log(categoryId.toString());
-    // log(image.toString());
-    // log(imagesFiles.toString());
-
+    if (isSubmitting) return;
+    isSubmitting = true;
     statuesRequest = StatuesRequest.loading;
     update();
-    var response = await adsRemoteData.addAdsBroker(
-        sharedPreferences!.getString("token")!,
-        typeChoose,
-        addressAdsController.text,
-        adsNumberController.text,
-        areaNumberController.text,
-        descriptionAdsController.text,
-        numberOhBuildingController.text,
-        postaNumController.text,
-        aditionalNumController.text,
-        face,
-        streetWidthController.text,
-        yearPriceController.text,
-        numberOffFalController.text,
-        roomNumController.text,
-        liftsNumController.text,
-        parkingNumController.text,
-        bathRoomNumController.text,
-        propartyAge,
-        preferEjar,
-        additionalPrivacyController.text,
-        facilitesList,
-        image,
-        imagesFiles,
-        loginWayController.text,
-        numberAuthController.text,
-        typeBroker == "شركة" ? "company" : "person",
-        comPanyNameController.text,
-        categoryId,
-        areaId,
-        cityId);
-    print(" response ??? ${response}");
+    try {
+      final token = sharedPreferences!.getString("token") ?? "";
+      var response = await adsRemoteData.addAdsBroker(
+          token,
+          typeChoose,
+          addressAdsController.text,
+          adsNumberController.text,
+          areaNumberController.text,
+          descriptionAdsController.text,
+          numberOhBuildingController.text,
+          postaNumController.text,
+          aditionalNumController.text,
+          face,
+          streetWidthController.text,
+          yearPriceController.text,
+          numberOffFalController.text,
+          roomNumController.text,
+          liftsNumController.text,
+          parkingNumController.text,
+          bathRoomNumController.text,
+          propartyAge,
+          preferEjar,
+          additionalPrivacyController.text,
+          facilitesList,
+          image,
+          imagesFiles,
+          loginWayController.text,
+          numberAuthController.text,
+          typeBroker == "شركة" ? "company" : "person",
+          comPanyNameController.text,
+          categoryId,
+          areaId,
+          cityId);
 
-    statuesRequest = handlingData(response);
+      statuesRequest = handlingData(response);
 
-    if (statuesRequest == StatuesRequest.success) {
-      dynamic responseBody = response;
-      print("response :: $responseBody");
-      showMessageSuccsess();
-    } else if (statuesRequest == StatuesRequest.unprocessableException) {
-      messageHandleException("${response['message']}", context);
-    } else if (statuesRequest == StatuesRequest.socketException) {
-      messageHandleException(S.of(context).noInternetApi, context);
-    } else if (statuesRequest == StatuesRequest.serverException) {
-      messageHandleException(S.of(context).serverException, context);
-    } else if (statuesRequest == StatuesRequest.unExpectedException) {
-      messageHandleException(S.of(context).unExcepectedException, context);
-    } else if (statuesRequest == StatuesRequest.defaultException) {
-      messageHandleException("خطأ", context);
-    } else if (statuesRequest == StatuesRequest.serverError) {
-      messageHandleException("${response}", context);
-    } else if (statuesRequest == StatuesRequest.timeoutException) {
-      messageHandleException(S.of(context).timeOutException, context);
-    } else if (statuesRequest == StatuesRequest.unauthorizedException) {
-      messageHandleExceptionVisitor(S.of(context).errorUnAuthorized, context);
+      if (statuesRequest == StatuesRequest.success) {
+        showMessageSuccsess();
+      } else if (statuesRequest == StatuesRequest.unprocessableException) {
+        messageHandleException("${response['message']}", context);
+      } else if (statuesRequest == StatuesRequest.socketException) {
+        messageHandleException(S.of(context).noInternetApi, context);
+      } else if (statuesRequest == StatuesRequest.serverException) {
+        messageHandleException(S.of(context).serverException, context);
+      } else if (statuesRequest == StatuesRequest.unExpectedException) {
+        messageHandleException(S.of(context).unExcepectedException, context);
+      } else if (statuesRequest == StatuesRequest.defaultException) {
+        messageHandleException("خطأ", context);
+      } else if (statuesRequest == StatuesRequest.serverError) {
+        messageHandleException("${response}", context);
+      } else if (statuesRequest == StatuesRequest.timeoutException) {
+        messageHandleException(S.of(context).timeOutException, context);
+      } else if (statuesRequest == StatuesRequest.unauthorizedException) {
+        messageHandleExceptionVisitor(S.of(context).errorUnAuthorized, context);
+      }
+    } finally {
+      isSubmitting = false;
+      update();
     }
-    update();
   }
 
   Future<void> addAdsOwner(context) async {
+    if (isSubmitting) return;
+    isSubmitting = true;
     statuesRequest = StatuesRequest.loading;
     update();
-    var response = await adsRemoteData.addAdsOwner(
-        sharedPreferences!.getString("token")!,
-        typeChoose,
-        addressAdsController.text,
-        numberOfdeadController.text,
-        areaNumberController.text,
-        descriptionAdsController.text,
-        numberOhBuildingController.text,
-        postaNumController.text,
-        aditionalNumController.text,
-        face,
-        streetWidthController.text,
-        yearPriceController.text,
-        insurancePriceController.text,
-        roomNumController.text,
-        liftsNumController.text,
-        parkingNumController.text,
-        bathRoomNumController.text,
-        propartyAge,
-        preferEjar,
-        additionalPrivacyController.text,
-        facilitesList,
-        image,
-        imagesFiles,
-        loginWayController.text,
-        categoryId,
-        cityId,
-        areaId);
-    print(" response ??? ${response}");
+    try {
+      final token = sharedPreferences!.getString("token") ?? "";
+      var response = await adsRemoteData.addAdsOwner(
+          token,
+          typeChoose,
+          addressAdsController.text,
+          numberOfdeadController.text,
+          areaNumberController.text,
+          descriptionAdsController.text,
+          numberOhBuildingController.text,
+          postaNumController.text,
+          aditionalNumController.text,
+          face,
+          streetWidthController.text,
+          yearPriceController.text,
+          insurancePriceController.text,
+          roomNumController.text,
+          liftsNumController.text,
+          parkingNumController.text,
+          bathRoomNumController.text,
+          propartyAge,
+          preferEjar,
+          additionalPrivacyController.text,
+          facilitesList,
+          image,
+          imagesFiles,
+          loginWayController.text,
+          categoryId,
+          cityId,
+          areaId);
 
-    statuesRequest = handlingData(response);
+      statuesRequest = handlingData(response);
 
-    if (statuesRequest == StatuesRequest.success) {
-      dynamic responseBody = response;
-      print("response :: $responseBody");
-      showMessageSuccsess();
-    } else if (statuesRequest == StatuesRequest.unprocessableException) {
-      messageHandleException("${response['message']}", context);
-    } else if (statuesRequest == StatuesRequest.socketException) {
-      messageHandleException(S.of(context).noInternetApi, context);
-    } else if (statuesRequest == StatuesRequest.serverException) {
-      messageHandleException(S.of(context).serverException, context);
-    } else if (statuesRequest == StatuesRequest.unExpectedException) {
-      messageHandleException(S.of(context).unExcepectedException, context);
-    } else if (statuesRequest == StatuesRequest.defaultException) {
-      messageHandleException("خطأ", context);
-    } else if (statuesRequest == StatuesRequest.serverError) {
-      messageHandleException("${response}", context);
-    } else if (statuesRequest == StatuesRequest.timeoutException) {
-      messageHandleException(S.of(context).timeOutException, context);
-    } else if (statuesRequest == StatuesRequest.unauthorizedException) {
-      messageHandleExceptionVisitor(S.of(context).errorUnAuthorized, context);
+      if (statuesRequest == StatuesRequest.success) {
+        showMessageSuccsess();
+      } else if (statuesRequest == StatuesRequest.unprocessableException) {
+        messageHandleException("${response['message']}", context);
+      } else if (statuesRequest == StatuesRequest.socketException) {
+        messageHandleException(S.of(context).noInternetApi, context);
+      } else if (statuesRequest == StatuesRequest.serverException) {
+        messageHandleException(S.of(context).serverException, context);
+      } else if (statuesRequest == StatuesRequest.unExpectedException) {
+        messageHandleException(S.of(context).unExcepectedException, context);
+      } else if (statuesRequest == StatuesRequest.defaultException) {
+        messageHandleException("خطأ", context);
+      } else if (statuesRequest == StatuesRequest.serverError) {
+        messageHandleException("${response}", context);
+      } else if (statuesRequest == StatuesRequest.timeoutException) {
+        messageHandleException(S.of(context).timeOutException, context);
+      } else if (statuesRequest == StatuesRequest.unauthorizedException) {
+        messageHandleExceptionVisitor(S.of(context).errorUnAuthorized, context);
+      }
+    } finally {
+      isSubmitting = false;
+      update();
     }
-    update();
   }
 
   List<LocationModel> citiesList = [];
@@ -696,103 +694,93 @@ class AddAdsController extends GetxController {
   int? areaId;
   int? categoryId;
 
-  SettingRemoteData settingRemoteData = SettingRemoteData(Get.put(Api()));
+  SettingRemoteData settingRemoteData = SettingRemoteData(Get.find<Api>());
+
   void changeCity(val) {
     cityName = val;
-    //  partenerId = val.id.toString();
     getDistricts(Get.context);
-
     update();
   }
 
   void changeCategory(val) {
     categoryName = val;
-    //  partenerId = val.id.toString();
-
     update();
   }
 
   void changeArea(val) {
     areaName = val;
-
     getCities(Get.context);
-
-    //  partenerId = val.id.toString();
-
     update();
   }
 
   void changeDistrict(val) {
     districtName = val;
-
     update();
   }
 
   Future<void> getDistricts(context) async {
+    if (cityId == null) return;
     districtsList.clear();
     districtName = null;
     districtId = null;
-    statuesRequest = StatuesRequest.loading;
+    districtsRequest = StatuesRequest.loading;
     update();
     var response = await settingRemoteData.getDistricts(cityId!);
-    print(" response ??? $response");
 
-    statuesRequest = handlingData(response);
+    districtsRequest = handlingData(response);
 
-    if (statuesRequest == StatuesRequest.success) {
-      List responseBody = response['data'];
-      print("response :: $responseBody");
-      districtsList.addAll(responseBody.map((e) => LocationModel.fromJson(e)));
-    } else if (statuesRequest == StatuesRequest.unprocessableException) {
+    if (districtsRequest == StatuesRequest.success) {
+      List responseBody = response['data'] ?? [];
+      districtsList = responseBody.map((e) => LocationModel.fromJson(e)).toList();
+    } else if (districtsRequest == StatuesRequest.unprocessableException) {
       messageHandleException("${response['message']}", context);
-    } else if (statuesRequest == StatuesRequest.socketException) {
+    } else if (districtsRequest == StatuesRequest.socketException) {
       messageHandleException(S.of(context).noInternetApi, context);
-    } else if (statuesRequest == StatuesRequest.serverException) {
+    } else if (districtsRequest == StatuesRequest.serverException) {
       messageHandleException(S.of(context).serverException, context);
-    } else if (statuesRequest == StatuesRequest.unExpectedException) {
+    } else if (districtsRequest == StatuesRequest.unExpectedException) {
       messageHandleException(S.of(context).unExcepectedException, context);
-    } else if (statuesRequest == StatuesRequest.defaultException) {
+    } else if (districtsRequest == StatuesRequest.defaultException) {
       messageHandleException(S.of(context).errorPhoneUseBeforeApi, context);
-    } else if (statuesRequest == StatuesRequest.serverError) {
+    } else if (districtsRequest == StatuesRequest.serverError) {
       messageHandleException("${response}", context);
-    } else if (statuesRequest == StatuesRequest.timeoutException) {
+    } else if (districtsRequest == StatuesRequest.timeoutException) {
       messageHandleException(S.of(context).timeOutException, context);
-    } else if (statuesRequest == StatuesRequest.unauthorizedException) {
+    } else if (districtsRequest == StatuesRequest.unauthorizedException) {
       messageHandleExceptionVisitor(S.of(context).errorUnAuthorized, context);
     }
     update();
   }
 
   Future<void> getCities(context) async {
+    if (areaId == null) return;
     citiesList.clear();
     cityName = null;
     cityId = null;
-    statuesRequest = StatuesRequest.loading;
+    citiesRequest = StatuesRequest.loading;
     update();
     var response = await settingRemoteData.getCities(areaId!);
-    print(" response ??? $response");
 
-    statuesRequest = handlingData(response);
+    citiesRequest = handlingData(response);
 
-    if (statuesRequest == StatuesRequest.success) {
-      List responseBody = response['data'];
-      print("response :: $responseBody");
-      citiesList.addAll(responseBody.map((e) => LocationModel.fromJson(e)));
-    } else if (statuesRequest == StatuesRequest.unprocessableException) {
+    if (citiesRequest == StatuesRequest.success) {
+      List responseBody = response['data'] ?? [];
+      citiesList = responseBody.map((e) => LocationModel.fromJson(e)).toList();
+    } else if (citiesRequest == StatuesRequest.unprocessableException) {
       messageHandleException("${response['message']}", context);
-    } else if (statuesRequest == StatuesRequest.socketException) {
+    } else if (citiesRequest == StatuesRequest.socketException) {
       messageHandleException(S.of(context).noInternetApi, context);
-    } else if (statuesRequest == StatuesRequest.serverException) {
+    } else if (citiesRequest == StatuesRequest.serverException) {
       messageHandleException(S.of(context).serverException, context);
-    } else if (statuesRequest == StatuesRequest.unExpectedException) {
+    } else if (citiesRequest == StatuesRequest.unExpectedException) {
       messageHandleException(S.of(context).unExcepectedException, context);
-    } else if (statuesRequest == StatuesRequest.defaultException) {
+    } else if (citiesRequest == StatuesRequest.defaultException) {
       messageHandleException(S.of(context).errorPhoneUseBeforeApi, context);
-    } else if (statuesRequest == StatuesRequest.serverError) {
+    } else if (citiesRequest == StatuesRequest.serverError) {
       messageHandleException("${response}", context);
-    } else if (statuesRequest == StatuesRequest.timeoutException) {
+    } else if (citiesRequest == StatuesRequest.timeoutException) {
       messageHandleException(S.of(context).timeOutException, context);
-    } else if (statuesRequest == StatuesRequest.unauthorizedException) {
+    } else if (citiesRequest == StatuesRequest.unauthorizedException) {
       messageHandleExceptionVisitor(S.of(context).errorUnAuthorized, context);
     }
     update();
@@ -823,7 +811,7 @@ class AddAdsController extends GetxController {
                 height: 5.h,
                 child: Center(
                   child: Text(
-                   S.of(context).login,
+                    S.of(context).login,
                     style: GoogleFonts.tajawal(
                         fontSize: 4.w,
                         color: LightMode.whiteColor,
@@ -837,64 +825,60 @@ class AddAdsController extends GetxController {
   }
 
   Future<void> getAreas(context) async {
-    statuesRequest = StatuesRequest.loading;
+    areasRequest = StatuesRequest.loading;
     update();
     var response = await settingRemoteData.getAreas();
-    print(" response ??? ${response}");
 
-    statuesRequest = handlingData(response);
+    areasRequest = handlingData(response);
 
-    if (statuesRequest == StatuesRequest.success) {
-      List responseBody = response['data'];
-      print("response :: $responseBody");
-      areasList.addAll(responseBody.map((e) => LocationModel.fromJson(e)));
-    } else if (statuesRequest == StatuesRequest.unprocessableException) {
+    if (areasRequest == StatuesRequest.success) {
+      List responseBody = response['data'] ?? [];
+      areasList = responseBody.map((e) => LocationModel.fromJson(e)).toList();
+    } else if (areasRequest == StatuesRequest.unprocessableException) {
       messageHandleException("${response['message']}", context);
-    } else if (statuesRequest == StatuesRequest.socketException) {
+    } else if (areasRequest == StatuesRequest.socketException) {
       messageHandleException(S.of(context).noInternetApi, context);
-    } else if (statuesRequest == StatuesRequest.serverException) {
+    } else if (areasRequest == StatuesRequest.serverException) {
       messageHandleException(S.of(context).serverException, context);
-    } else if (statuesRequest == StatuesRequest.unExpectedException) {
+    } else if (areasRequest == StatuesRequest.unExpectedException) {
       messageHandleException(S.of(context).unExcepectedException, context);
-    } else if (statuesRequest == StatuesRequest.defaultException) {
+    } else if (areasRequest == StatuesRequest.defaultException) {
       messageHandleException(S.of(context).errorPhoneUseBeforeApi, context);
-    } else if (statuesRequest == StatuesRequest.serverError) {
+    } else if (areasRequest == StatuesRequest.serverError) {
       messageHandleException("${response}", context);
-    } else if (statuesRequest == StatuesRequest.timeoutException) {
+    } else if (areasRequest == StatuesRequest.timeoutException) {
       messageHandleException(S.of(context).timeOutException, context);
-    } else if (statuesRequest == StatuesRequest.unauthorizedException) {
+    } else if (areasRequest == StatuesRequest.unauthorizedException) {
       messageHandleExceptionVisitor(S.of(context).errorUnAuthorized, context);
     }
     update();
   }
 
   Future<void> getCategories(context) async {
-    statuesRequest = StatuesRequest.loading;
+    categoriesRequest = StatuesRequest.loading;
     update();
     var response = await settingRemoteData.getCategories();
-    print(" response ??? ${response}");
 
-    statuesRequest = handlingData(response);
+    categoriesRequest = handlingData(response);
 
-    if (statuesRequest == StatuesRequest.success) {
-      List responseBody = response['data'];
-      print("response :: $responseBody");
-      categoryList.addAll(responseBody.map((e) => LocationModel.fromJson(e)));
-    } else if (statuesRequest == StatuesRequest.unprocessableException) {
+    if (categoriesRequest == StatuesRequest.success) {
+      List responseBody = response['data'] ?? [];
+      categoryList = responseBody.map((e) => LocationModel.fromJson(e)).toList();
+    } else if (categoriesRequest == StatuesRequest.unprocessableException) {
       messageHandleException("${response['message']}", context);
-    } else if (statuesRequest == StatuesRequest.socketException) {
+    } else if (categoriesRequest == StatuesRequest.socketException) {
       messageHandleException(S.of(context).noInternetApi, context);
-    } else if (statuesRequest == StatuesRequest.serverException) {
+    } else if (categoriesRequest == StatuesRequest.serverException) {
       messageHandleException(S.of(context).serverException, context);
-    } else if (statuesRequest == StatuesRequest.unExpectedException) {
+    } else if (categoriesRequest == StatuesRequest.unExpectedException) {
       messageHandleException(S.of(context).unExcepectedException, context);
-    } else if (statuesRequest == StatuesRequest.defaultException) {
+    } else if (categoriesRequest == StatuesRequest.defaultException) {
       messageHandleException(S.of(context).errorPhoneUseBeforeApi, context);
-    } else if (statuesRequest == StatuesRequest.serverError) {
+    } else if (categoriesRequest == StatuesRequest.serverError) {
       messageHandleException("${response}", context);
-    } else if (statuesRequest == StatuesRequest.timeoutException) {
+    } else if (categoriesRequest == StatuesRequest.timeoutException) {
       messageHandleException(S.of(context).timeOutException, context);
-    } else if (statuesRequest == StatuesRequest.unauthorizedException) {
+    } else if (categoriesRequest == StatuesRequest.unauthorizedException) {
       messageHandleExceptionVisitor(S.of(context).errorUnAuthorized, context);
     }
     update();
@@ -905,5 +889,32 @@ class AddAdsController extends GetxController {
     getCategories(Get.context);
     getAreas(Get.context);
     super.onInit();
+  }
+
+  @override
+  void onClose() {
+    _successTimer?.cancel();
+    comPanyNameController.dispose();
+    addressAdsController.dispose();
+    numberOfdeadController.dispose();
+    areaNumberController.dispose();
+    descriptionAdsController.dispose();
+    postaNumController.dispose();
+    numberOhBuildingController.dispose();
+    aditionalNumController.dispose();
+    streetWidthController.dispose();
+    yearPriceController.dispose();
+    monthPriceController.dispose();
+    insurancePriceController.dispose();
+    numberAuthController.dispose();
+    adsNumberController.dispose();
+    numberOffFalController.dispose();
+    roomNumController.dispose();
+    bathRoomNumController.dispose();
+    parkingNumController.dispose();
+    liftsNumController.dispose();
+    loginWayController.dispose();
+    additionalPrivacyController.dispose();
+    super.onClose();
   }
 }

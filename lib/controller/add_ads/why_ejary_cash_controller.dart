@@ -13,7 +13,7 @@ import 'package:screen_go/extensions/responsive_nums.dart';
 
 class WhyEjaryCashController extends GetxController {
   StatuesRequest statuesRequest = StatuesRequest.none;
-  WhyEjaryRemoteData whyEjaryRemoteData = WhyEjaryRemoteData(Get.put(Api()));
+  WhyEjaryRemoteData whyEjaryRemoteData = WhyEjaryRemoteData(Get.find<Api>());
   List<InformationModel> informationList = [];
 
   void messageHandleException(message, context) {
@@ -55,20 +55,15 @@ class WhyEjaryCashController extends GetxController {
   }
 
   Future<void> getInformation(context) async {
-    print("1");
-    informationList.clear();
     statuesRequest = StatuesRequest.loading;
     update();
     var response = await whyEjaryRemoteData.getInformation();
-    print(" response ??? ${response}");
 
     statuesRequest = handlingData(response);
 
     if (statuesRequest == StatuesRequest.success) {
-      List responseBody = response['data'];
-      print("response :: $responseBody");
-      informationList
-          .addAll(responseBody.map((e) => InformationModel.fromJson(e)));
+      List responseBody = response['data'] ?? [];
+      informationList = responseBody.map((e) => InformationModel.fromJson(e)).toList();
     } else if (statuesRequest == StatuesRequest.unprocessableException) {
       messageHandleException("${response['message']}", context);
     } else if (statuesRequest == StatuesRequest.socketException) {

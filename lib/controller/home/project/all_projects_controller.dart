@@ -5,7 +5,9 @@ class AllProjectsController extends GetxController {
   List<PartenerModel> allProgects = [];
   @override
   void onInit() {
-    allProgects = Get.arguments['AllProjects'];
+    if (Get.arguments is Map && Get.arguments['AllProjects'] != null) {
+      allProgects = List<PartenerModel>.from(Get.arguments['AllProjects']);
+    }
     super.onInit();
   }
 }

@@ -18,7 +18,7 @@ import 'package:screen_go/extensions/responsive_nums.dart';
 
 class AdsController extends GetxController {
   StatuesRequest statuesRequest = StatuesRequest.none;
-  AdsRemoteData adsRemoteData = AdsRemoteData(Get.put(Api()));
+  AdsRemoteData adsRemoteData = AdsRemoteData(Get.find<Api>());
   TextEditingController minController = TextEditingController();
   TextEditingController maxController = TextEditingController();
   List<AdsModel> filterAds = [];
@@ -140,19 +140,16 @@ class AdsController extends GetxController {
   }
 
   Future<List<AdsModel>> getAllAds(context) async {
-    allAds.clear();
-    filter = false;
     statuesRequest = StatuesRequest.loading;
     update();
     var response = await adsRemoteData.getAllAds();
-    print(" response ??? ${response}");
 
     statuesRequest = handlingData(response);
 
     if (statuesRequest == StatuesRequest.success) {
-      List responseBody = response['data'];
-      print("response :: $responseBody");
-      allAds.addAll(responseBody.map((e) => AdsModel.fromJson(e)));
+      List responseBody = response['data'] ?? [];
+      allAds = responseBody.map((e) => AdsModel.fromJson(e)).toList();
+      filter = false;
     } else if (statuesRequest == StatuesRequest.unprocessableException) {
       messageHandleException("${response['message']}", context);
     } else if (statuesRequest == StatuesRequest.socketException) {
@@ -175,20 +172,17 @@ class AdsController extends GetxController {
   }
 
   Future<List<AdsOwnerModel>> getAllAdsForOwner(context) async {
-    allAdsOwner.clear();
-    filterOwner = false;
     statuesRequest = StatuesRequest.loading;
     update();
     var response = await adsRemoteData
-        .getAllAdsOwner(sharedPreferences!.getString("token"));
-    log(" response ??? ${response}");
+        .getAllAdsOwner(sharedPreferences!.getString("token") ?? "");
 
     statuesRequest = handlingData(response);
 
     if (statuesRequest == StatuesRequest.success) {
-      List responseBody = response['data'];
-      print("response :: $responseBody");
-      allAdsOwner.addAll(responseBody.map((e) => AdsOwnerModel.fromJson(e)));
+      List responseBody = response['data'] ?? [];
+      allAdsOwner = responseBody.map((e) => AdsOwnerModel.fromJson(e)).toList();
+      filterOwner = false;
       sharedPreferences!.setString("leangthAdsOwner", "${allAdsOwner.length}");
     } else if (statuesRequest == StatuesRequest.unprocessableException) {
       messageHandleException("${response['message']}", context);
@@ -609,24 +603,21 @@ class AdsController extends GetxController {
   // }
 
   Future<List<AdsModel>> getFilterAds(context) async {
-    filterAds.clear();
-    print("succses");
     statuesRequest = StatuesRequest.loading;
     update();
+    var token = sharedPreferences!.getString("token") ?? "";
     var response = await adsRemoteData.filterAds(
-        sharedPreferences!.getString("token")!,
+        token,
         priceType,
         numOfRoome.toString(),
         minController.text == "" ? "0" : minController.text,
         maxController.text == "" ? "0" : maxController.text);
-    print(" response ??? ${response}");
 
     statuesRequest = handlingData(response);
 
     if (statuesRequest == StatuesRequest.success) {
-      List responseBody = response['data'];
-      print("response :: $responseBody");
-      filterAds.addAll(responseBody.map((e) => AdsModel.fromJson(e)));
+      List responseBody = response['data'] ?? [];
+      filterAds = responseBody.map((e) => AdsModel.fromJson(e)).toList();
       filter = true;
       Get.back();
     } else if (statuesRequest == StatuesRequest.unprocessableException) {
@@ -652,15 +643,20 @@ class AdsController extends GetxController {
 
   @override
   void onInit() {
-    if (sharedPreferences!.getBool("visit") == false) {
+    final visited = sharedPreferences!.getBool("visit") ?? false;
+    if (!visited) {
       log("no visit");
-    //  getAllAds(Get.context);
-    //  getAllAdsForOwner(Get.context);
     } else {
       log(" visit");
-    //  getAllAds(Get.context);
     }
 
     super.onInit();
+  }
+
+  @override
+  void onClose() {
+    minController.dispose();
+    maxController.dispose();
+    super.onClose();
   }
 }

@@ -14,41 +14,55 @@ import 'package:screen_go/extensions/responsive_nums.dart';
 
 class OnBoardController extends GetxController {
   StatuesRequest statuesRequest_3 = StatuesRequest.none;
-  OnBoardingRemoteData rentRemoteData = OnBoardingRemoteData(Get.put(Api()));
+  OnBoardingRemoteData rentRemoteData = OnBoardingRemoteData(Get.find<Api>());
+  PageController pageController = PageController();
 
   int indexList = 0;
-  void onPressNext() {
-    if (indexList == 0) {
-      indexList++;
 
+  void onPageChanged(int index) {
+    indexList = index;
+    update();
+  }
+
+  void onPressNext() {
+    if (indexList < onBoarding.length - 1) {
+      indexList++;
+      if (pageController.hasClients) {
+        pageController.animateToPage(
+          indexList,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeInOut,
+        );
+      }
       update();
     } else {
-      Get.to(() => const MainAuth(),
+      sharedPreferences!.setString("pageStart", "mainRegister");
+      Get.offAll(() => const MainAuth(),
           transition: Transition.leftToRightWithFade,
           duration: const Duration(milliseconds: 800));
     }
   }
 
   void onPressSkip() {
-    Get.to(() => const MainAuth(),
+    sharedPreferences!.setString("pageStart", "mainRegister");
+    Get.offAll(() => const MainAuth(),
         transition: Transition.leftToRightWithFade,
         duration: const Duration(milliseconds: 800));
   }
 
   List<OnBoardingModel> onBoarding = [];
+
   Future<void> getAllUnites(context) async {
-    onBoarding.clear();
+    if (onBoarding.isNotEmpty) return;
     statuesRequest_3 = StatuesRequest.loading;
     update();
     var response = await rentRemoteData.getInfo();
-    print(" response ??? ${response}");
 
     statuesRequest_3 = handlingData(response);
 
     if (statuesRequest_3 == StatuesRequest.success) {
-      List responseBody = response['data'];
-      print("response :: $responseBody");
-      onBoarding.addAll(responseBody.map((e) => OnBoardingModel.fromJson(e)));
+      List responseBody = response['data'] ?? [];
+      onBoarding = responseBody.map((e) => OnBoardingModel.fromJson(e)).toList();
     } else if (statuesRequest_3 == StatuesRequest.unprocessableException) {
       messageHandleException("${response['message']}", context);
     } else if (statuesRequest_3 == StatuesRequest.socketException) {
@@ -150,5 +164,11 @@ class OnBoardController extends GetxController {
     sharedPreferences!.setString("lang", "ar");
     getAllUnites(Get.context);
     super.onInit();
+  }
+
+  @override
+  void onClose() {
+    pageController.dispose();
+    super.onClose();
   }
 }

@@ -1,5 +1,6 @@
 class AppLinks {
-  static String serverLink = "https://ejaricash.online/api";
+  static const String serverLink =
+      String.fromEnvironment('BASE_URL', defaultValue: "https://ejaricash.online/api");
 
   //onBoarding
   static String onBoardingInfo = "$serverLink/banners";

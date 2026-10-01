@@ -16,7 +16,7 @@ class PrivacyController extends GetxController {
   SettingModel? settingModel;
   StatuesRequest statuesRequest = StatuesRequest.none;
 
-  SettingRemoteData settingRemoteData = SettingRemoteData(Get.put(Api()));
+  SettingRemoteData settingRemoteData = SettingRemoteData(Get.find<Api>());
   String htmlData = "";
 
   Future<void> fetchHetState() async {

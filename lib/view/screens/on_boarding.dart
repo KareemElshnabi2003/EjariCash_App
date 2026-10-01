@@ -2,7 +2,6 @@ import 'package:ejary_cash/controller/on_board_controller.dart';
 import 'package:ejary_cash/core/constant/colors.dart';
 import 'package:ejary_cash/core/constant/images.dart';
 import 'package:ejary_cash/generated/l10n.dart';
-import 'package:ejary_cash/main.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -14,43 +13,42 @@ class OnBoarding extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.put(OnBoardController());
+    final controller = Get.isRegistered<OnBoardController>()
+        ? Get.find<OnBoardController>()
+        : Get.put(OnBoardController());
+
     return Scaffold(
       backgroundColor: LightMode.whiteColor,
       body: Center(
         child: GetBuilder<OnBoardController>(
+            init: controller,
             builder: (controller) => Column(
                   children: [
                     Container(
                       height: 77.h,
                       width: 100.w,
                       margin: EdgeInsets.only(top: 7.h, right: 5.w, left: 5.w),
-                      child: ListView.builder(
-                        itemCount: controller.onBoarding.length,
-                        scrollDirection: Axis.horizontal,
-                        padding: EdgeInsets.zero,
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          controller.indexList = index;
-                          print(controller.indexList);
-                          return cardOnBoarding(
-                              controller.onBoarding[controller.indexList]
-                                  .bannerImage!,
-                              controller.indexList == 0
-                                  ? ImagesLink.onBoard_1DotImage
-                                  : ImagesLink.onBoard_2DotImage,
-                              controller.onBoarding[index].title!);
-                        },
-                      ),
+                      child: controller.onBoarding.isEmpty
+                          ? const Center(child: CircularProgressIndicator())
+                          : PageView.builder(
+                              controller: controller.pageController,
+                              itemCount: controller.onBoarding.length,
+                              onPageChanged: controller.onPageChanged,
+                              itemBuilder: (context, index) {
+                                final item = controller.onBoarding[index];
+                                return cardOnBoarding(
+                                    item.bannerImage ?? "",
+                                    controller.indexList == 0
+                                        ? ImagesLink.onBoard_1DotImage
+                                        : ImagesLink.onBoard_2DotImage,
+                                    item.title ?? "");
+                              },
+                            ),
                     ),
                     btnClick(S.of(Get.context!).next, () {
-                      print(controller.indexList);
                       controller.onPressNext();
-                      sharedPreferences!.setString("pageStart", "mainRegister");
                     }),
                     textClik(() {
-                      sharedPreferences!.setString("pageStart", "mainRegister");
-
                       controller.onPressSkip();
                     }, S.of(Get.context!).skip)
                   ],

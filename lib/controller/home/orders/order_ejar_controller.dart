@@ -18,7 +18,7 @@ class OrderEjarController extends GetxController {
   List<OrderInfoModel> allRents = [];
 
   StatuesRequest statuesRequest_4 = StatuesRequest.none;
-  RentRemoteData rentRemoteData = RentRemoteData(Get.put(Api()));
+  RentRemoteData rentRemoteData = RentRemoteData(Get.find<Api>());
   void messageHandleExceptionVisitor(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,

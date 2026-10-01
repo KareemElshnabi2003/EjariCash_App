@@ -15,7 +15,7 @@ class FaqController extends GetxController {
   StatuesRequest statuesRequest = StatuesRequest.none;
   TextEditingController searchController = TextEditingController();
   List<FAQModel> faqList = [];
-  SettingRemoteData settingRemoteData = SettingRemoteData(Get.put(Api()));
+  SettingRemoteData settingRemoteData = SettingRemoteData(Get.find<Api>());
   bool isAnswer = false;
   int index = 0;
   List<FAQModel> result = [];
@@ -119,7 +119,7 @@ class FaqController extends GetxController {
     if (statuesRequest == StatuesRequest.success) {
       List responseBody = response['data'];
       print("response :: $responseBody");
-      faqList.addAll(responseBody.map((e) => FAQModel.fromJson(e)));
+      faqList = responseBody.map((e) => FAQModel.fromJson(e)).toList();
     } else if (statuesRequest == StatuesRequest.unprocessableException) {
     } else if (statuesRequest == StatuesRequest.socketException) {
       messageHandleException(S.of(context).noInternetApi, context);
@@ -155,7 +155,8 @@ class FaqController extends GetxController {
   void search(val) {
     result.clear();
     result = faqList
-        .where((qa) => qa.question!.toLowerCase().contains(val.toLowerCase()))
+        .where((qa) =>
+            (qa.question ?? '').toLowerCase().contains(val.toLowerCase()))
         .toList();
 
     print(result);
@@ -168,5 +169,11 @@ class FaqController extends GetxController {
 
     isFav.clear();
     super.onInit();
+  }
+
+  @override
+  void onClose() {
+    searchController.dispose();
+    super.onClose();
   }
 }

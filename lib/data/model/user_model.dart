@@ -20,49 +20,50 @@ class UserModel {
   String? ownerViewsAdsCount;
   String? monthlyRent;
 
-  UserModel(
-      {this.id,
-      this.name,
-      this.accountType,
-      this.email,
-      this.countryCode,
-      this.mobile,
-      this.status,
-      this.code,
-      this.emailVerifiedAt,
-      this.birthdate,
-      this.linkedinLink,
-      this.bio,
-      this.photoProfile,
-      this.createdAt,
-      this.token,
-      this.fcmId,
-      this.ownerAdsCount,
-      this.ownerFavAdsCount,
-      this.ownerViewsAdsCount,
-      this.monthlyRent});
+  UserModel({
+    this.id,
+    this.name,
+    this.accountType,
+    this.email,
+    this.countryCode,
+    this.mobile,
+    this.status,
+    this.code,
+    this.emailVerifiedAt,
+    this.birthdate,
+    this.linkedinLink,
+    this.bio,
+    this.photoProfile,
+    this.createdAt,
+    this.token,
+    this.fcmId,
+    this.ownerAdsCount,
+    this.ownerFavAdsCount,
+    this.ownerViewsAdsCount,
+    this.monthlyRent,
+  });
 
   UserModel.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-    accountType = json['account_type'];
-    email = json['email'];
-    countryCode = json['country_code'];
-    mobile = json['mobile'];
-    status = json['status'];
-    code = json['code'].toString();
-    emailVerifiedAt = json['email_verified_at'];
-    birthdate = json['birthdate'];
-    linkedinLink = json['linkedin_link'];
-    bio = json['bio'];
-    photoProfile = json['photo_profile'];
-    createdAt = json['created_at'];
-    token = json['token'];
-    fcmId = json['fcm_id'];
-    ownerAdsCount = json['owner_ads_count'].toString();
-    ownerFavAdsCount = json['owner_fav_ads_count'].toString();
-    ownerViewsAdsCount = json['owner_views_ads_count'].toString();
-    monthlyRent = json['monthly_rent'].toString();
+    id = json['id'] is int ? json['id'] : int.tryParse(json['id']?.toString() ?? '');
+    name = json['name']?.toString();
+    accountType = json['account_type']?.toString();
+    email = json['email']?.toString();
+    countryCode = json['country_code']?.toString();
+    mobile = json['mobile']?.toString();
+    status = json['status']?.toString();
+    code = json['code'] != null ? json['code'].toString() : null;
+    emailVerifiedAt = json['email_verified_at']?.toString();
+    birthdate = json['birthdate']?.toString();
+    linkedinLink = json['linkedin_link']?.toString();
+    bio = json['bio']?.toString();
+    photoProfile = json['photo_profile']?.toString();
+    createdAt = json['created_at']?.toString();
+    token = json['token']?.toString();
+    fcmId = json['fcm_id']?.toString();
+    ownerAdsCount = json['owner_ads_count'] != null ? json['owner_ads_count'].toString() : "0";
+    ownerFavAdsCount = json['owner_fav_ads_count'] != null ? json['owner_fav_ads_count'].toString() : "0";
+    ownerViewsAdsCount = json['owner_views_ads_count'] != null ? json['owner_views_ads_count'].toString() : "0";
+    monthlyRent = json['monthly_rent'] != null ? json['monthly_rent'].toString() : null;
   }
 
   Map<String, dynamic> toJson() {

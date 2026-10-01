@@ -16,24 +16,21 @@ import 'package:url_launcher/url_launcher.dart';
 
 class ProjectInfoController extends GetxController {
   StatuesRequest statuesRequest = StatuesRequest.none;
-  ProjectsRemoteData projectsRemoteData = ProjectsRemoteData(Get.put(Api()));
+  ProjectsRemoteData projectsRemoteData = ProjectsRemoteData(Get.find<Api>());
   List<ProjectModel> allProjectForPartener = [];
   String? id;
   Future<void> getAllProjects(context) async {
-    allProjectForPartener.clear();
     statuesRequest = StatuesRequest.loading;
     update();
     var response = await projectsRemoteData.getProjectsForPartener(
-        id, sharedPreferences!.getString("token"));
-    print(" response ??? ${response}");
+        id, sharedPreferences!.getString("token") ?? "");
 
     statuesRequest = handlingData(response);
 
     if (statuesRequest == StatuesRequest.success) {
-      List responseBody = response['data'];
-      print("response :: $responseBody");
-      allProjectForPartener
-          .addAll(responseBody.map((e) => ProjectModel.fromJson(e)));
+      List responseBody = response['data'] ?? [];
+      allProjectForPartener =
+          responseBody.map((e) => ProjectModel.fromJson(e)).toList();
     } else if (statuesRequest == StatuesRequest.unprocessableException) {
       messageHandleException("${response['message']}", context);
     } else if (statuesRequest == StatuesRequest.socketException) {
@@ -131,17 +128,18 @@ class ProjectInfoController extends GetxController {
   Future<void> urlLuncher(
     String urlLink,
   ) async {
-    final Uri url = Uri.parse(urlLink);
-
-    if (!await launchUrl(url)) {
-      throw "can't launch $url";
-    }
+    try {
+      final Uri url = Uri.parse(urlLink);
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } catch (_) {}
   }
 
   @override
   void onInit() {
-    id = Get.arguments["id"];
-    getAllProjects(context);
+    if (Get.arguments is Map && Get.arguments["id"] != null) {
+      id = Get.arguments["id"].toString();
+    }
+    getAllProjects(Get.context);
     super.onInit();
   }
 }

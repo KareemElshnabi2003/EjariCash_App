@@ -1,187 +1,209 @@
-// get post delete  put methode
-
-// ignore_for_file: avoid_print
-
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
+import 'package:ejary_cash/core/class/api_failure.dart';
 import 'package:ejary_cash/core/class/status_request.dart';
-import 'package:ejary_cash/core/function/custom_exception.dart';
 import 'package:ejary_cash/core/function/handle_exception.dart';
 import 'package:ejary_cash/main.dart';
 import 'package:http/http.dart' as http;
 
 class Api {
-  Future<Either<StatuesRequest, dynamic>> getData(
-      String linkUrl, Map<String, String>? headers) async {
-    final url = linkUrl;
+  static const Duration defaultTimeout = Duration(seconds: 20);
 
-    try {
-      final response = await http.get(Uri.parse(url), headers: headers);
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        print(data);
-        return right(data);
-      } else if (response.statusCode == 400) {
-        throw BadRequestException();
-      } else if (response.statusCode == 401) {
-        log(response.body);
-        throw UnauthorizedException();
-      } else if (response.statusCode == 404) {
-        log(response.body);
-        return left(StatuesRequest.serverException);
-      } else if (response.statusCode == 403) {
-        throw ForbiddenException();
-      } else if (response.statusCode == 500) {
-        return left(StatuesRequest.serverError);
-      } else if (response.statusCode == 409) {
-        throw ConflictException();
-      } else {
-        return left(StatuesRequest.defaultException);
+  Uri _buildUri(String url, [Map<String, dynamic>? queryParameters]) {
+    final parsed = Uri.parse(url);
+    if (queryParameters == null || queryParameters.isEmpty) {
+      return parsed;
+    }
+    final params = Map<String, dynamic>.from(parsed.queryParameters);
+    queryParameters.forEach((key, value) {
+      if (value != null && value.toString().trim().isNotEmpty) {
+        params[key] = value.toString();
       }
-    } on SocketException {
-      return left(StatuesRequest.socketException);
-    } on http.ClientException {
-      return left(StatuesRequest.clientException);
-    } on TimeoutException {
-      return left(StatuesRequest.timeoutException);
-    } catch (e) {
-      return left(handleException(e));
+    });
+    return parsed.replace(
+      queryParameters: params.map((k, v) => MapEntry(k, v.toString())),
+    );
+  }
+
+  Either<ApiFailure, dynamic> _processResponse(http.Response response) {
+    final statusCode = response.statusCode;
+    final isSuccess = statusCode >= 200 && statusCode < 300;
+
+    // Handle 204 No Content or empty body
+    if (statusCode == 204 || response.body.trim().isEmpty) {
+      if (isSuccess) {
+        return right(<String, dynamic>{'status': true, 'data': null});
+      }
+    }
+
+    dynamic parsedBody;
+    try {
+      parsedBody = response.body.trim().isEmpty ? null : jsonDecode(response.body);
+    } catch (_) {
+      parsedBody = response.body;
+    }
+
+    if (isSuccess) {
+      return right(parsedBody ?? <String, dynamic>{'status': true});
+    }
+
+    // Extract message safely from error body
+    String message = '';
+    if (parsedBody is Map) {
+      message = parsedBody['message']?.toString() ??
+          parsedBody['error']?.toString() ??
+          parsedBody['errors']?.toString() ??
+          '';
+    } else if (parsedBody is String) {
+      message = parsedBody;
+    }
+
+    switch (statusCode) {
+      case 400:
+        return left(ApiFailure(
+          status: StatuesRequest.badRequestException,
+          statusCode: statusCode,
+          message: message.isNotEmpty ? message : 'Bad request',
+          data: parsedBody,
+        ));
+      case 401:
+        return left(ApiFailure(
+          status: StatuesRequest.unauthorizedException,
+          statusCode: statusCode,
+          message: message.isNotEmpty ? message : 'Unauthorized',
+          data: parsedBody,
+        ));
+      case 403:
+        return left(ApiFailure(
+          status: StatuesRequest.forbiddenException,
+          statusCode: statusCode,
+          message: message.isNotEmpty ? message : 'Forbidden',
+          data: parsedBody,
+        ));
+      case 404:
+        return left(ApiFailure(
+          status: StatuesRequest.serverException,
+          statusCode: statusCode,
+          message: message.isNotEmpty ? message : 'Resource not found',
+          data: parsedBody,
+        ));
+      case 409:
+        return left(ApiFailure(
+          status: StatuesRequest.conflictException,
+          statusCode: statusCode,
+          message: message.isNotEmpty ? message : 'Conflict occurred',
+          data: parsedBody,
+        ));
+      case 422:
+        return left(ApiFailure(
+          status: StatuesRequest.unprocessableException,
+          statusCode: statusCode,
+          message: message.isNotEmpty ? message : 'Unprocessable entity',
+          data: parsedBody,
+        ));
+      case 500:
+      case 502:
+      case 503:
+        return left(ApiFailure(
+          status: StatuesRequest.serverError,
+          statusCode: statusCode,
+          message: message.isNotEmpty ? message : 'Internal server error',
+          data: parsedBody,
+        ));
+      default:
+        return left(ApiFailure(
+          status: StatuesRequest.defaultException,
+          statusCode: statusCode,
+          message: message.isNotEmpty
+              ? message
+              : 'Request failed with status $statusCode',
+          data: parsedBody,
+        ));
     }
   }
 
-  Future<Either<StatuesRequest, dynamic>> postData(
-      String linkUrl, Map<String, String>? headers, Map data) async {
-    final url = linkUrl;
+  Future<Either<ApiFailure, dynamic>> _executeRequest(
+    Future<http.Response> Function() requestFn,
+  ) async {
+    try {
+      final response = await requestFn().timeout(defaultTimeout);
+      return _processResponse(response);
+    } on SocketException {
+      return left(const ApiFailure(
+        status: StatuesRequest.socketException,
+        message: 'No internet connection',
+      ));
+    } on http.ClientException catch (e) {
+      return left(ApiFailure(
+        status: StatuesRequest.clientException,
+        message: e.message,
+      ));
+    } on TimeoutException {
+      return left(const ApiFailure(
+        status: StatuesRequest.timeoutException,
+        message: 'Request timeout',
+      ));
+    } on FormatException catch (e) {
+      return left(ApiFailure(
+        status: StatuesRequest.formatException,
+        message: e.message,
+      ));
+    } catch (e) {
+      return left(ApiFailure(
+        status: handleException(e),
+        message: e.toString(),
+      ));
+    }
+  }
 
+  Future<Either<ApiFailure, dynamic>> getData(
+    String linkUrl,
+    Map<String, String>? headers, {
+    Map<String, dynamic>? queryParameters,
+  }) async {
+    final uri = _buildUri(linkUrl, queryParameters);
+    return _executeRequest(() => http.get(uri, headers: headers));
+  }
+
+  Future<Either<ApiFailure, dynamic>> postData(
+    String linkUrl,
+    Map<String, String>? headers,
+    Map data, {
+    Map<String, dynamic>? queryParameters,
+  }) async {
+    final uri = _buildUri(linkUrl, queryParameters);
     final dataPost = jsonEncode(data);
-    try {
-      final response = await http
-          .post(Uri.parse(url), headers: headers, body: dataPost)
-          .timeout(const Duration(seconds: 15));
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        print(data);
-        return right(data);
-      } else if (response.statusCode == 422) {
-        final data = jsonDecode(response.body);
-        print(data);
-        return left(StatuesRequest.unprocessableException);
-      } else if (response.statusCode == 400) {
-        throw BadRequestException();
-      } else if (response.statusCode == 401) {
-        log(response.body);
-        throw UnauthorizedException();
-      } else if (response.statusCode == 404) {
-        log(response.body);
-        return left(StatuesRequest.serverException);
-      } else if (response.statusCode == 403) {
-        throw ForbiddenException();
-      } else if (response.statusCode == 500) {
-        print(">>>>>  ${response.body}");
-        final data = jsonDecode(response.body);
-        String message = data['message'];
-        print("APi >> $message");
-        return right(message);
-        //return left(StatuesRequest.serverError);
-      } else if (response.statusCode == 409) {
-        throw ConflictException();
-      } else {
-        print(response.statusCode);
-        return left(StatuesRequest.defaultException);
-      }
-    } on SocketException {
-      return left(StatuesRequest.socketException);
-    } on http.ClientException {
-      return left(StatuesRequest.clientException);
-    } on TimeoutException {
-      return left(StatuesRequest.timeoutException);
-    } catch (e) {
-      return left(handleException(e));
-    }
+    return _executeRequest(
+      () => http.post(uri, headers: headers, body: dataPost),
+    );
   }
 
-  Future<Either<StatuesRequest, dynamic>> updateData(
-      String linkUrl, Map<String, String>? headers, Map data) async {
-    final url = linkUrl;
-
+  Future<Either<ApiFailure, dynamic>> updateData(
+    String linkUrl,
+    Map<String, String>? headers,
+    Map data, {
+    Map<String, dynamic>? queryParameters,
+  }) async {
+    final uri = _buildUri(linkUrl, queryParameters);
     final dataPost = jsonEncode(data);
-    try {
-      final response = await http
-          .put(Uri.parse(url), headers: headers, body: dataPost)
-          .timeout(const Duration(seconds: 20));
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        print(data);
-        return right(data);
-      } else if (response.statusCode == 400) {
-        throw BadRequestException();
-      } else if (response.statusCode == 401) {
-        throw UnauthorizedException();
-      } else if (response.statusCode == 404) {
-        return left(StatuesRequest.serverException);
-      } else if (response.statusCode == 403) {
-        throw ForbiddenException();
-      } else if (response.statusCode == 500) {
-        return left(StatuesRequest.serverError);
-      } else if (response.statusCode == 409) {
-        throw ConflictException();
-      } else {
-        return left(StatuesRequest.defaultException);
-      }
-    } on SocketException {
-      return left(StatuesRequest.socketException);
-    } on http.ClientException {
-      return left(StatuesRequest.clientException);
-    } on TimeoutException {
-      return left(StatuesRequest.timeoutException);
-    } catch (e) {
-      return left(handleException(e));
-    }
+    return _executeRequest(
+      () => http.put(uri, headers: headers, body: dataPost),
+    );
   }
 
-  Future<Either<StatuesRequest, dynamic>> deleteData(
-      String linkUrl, Map<String, String>? headers) async {
-    final url = linkUrl;
-
-    try {
-      final response = await http
-          .delete(Uri.parse(url), headers: headers)
-          .timeout(const Duration(seconds: 10));
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        print(data);
-        return right(data);
-      } else if (response.statusCode == 400) {
-        throw BadRequestException();
-      } else if (response.statusCode == 401) {
-        throw UnauthorizedException();
-      } else if (response.statusCode == 404) {
-        return left(StatuesRequest.serverException);
-      } else if (response.statusCode == 403) {
-        throw ForbiddenException();
-      } else if (response.statusCode == 500) {
-        return left(StatuesRequest.serverError);
-      } else if (response.statusCode == 409) {
-        throw ConflictException();
-      } else {
-        return left(StatuesRequest.defaultException);
-      }
-    } on SocketException {
-      return left(StatuesRequest.socketException);
-    } on http.ClientException {
-      return left(StatuesRequest.clientException);
-    } on TimeoutException {
-      return left(StatuesRequest.timeoutException);
-    } catch (e) {
-      return left(handleException(e));
-    }
+  Future<Either<ApiFailure, dynamic>> deleteData(
+    String linkUrl,
+    Map<String, String>? headers, {
+    Map<String, dynamic>? queryParameters,
+  }) async {
+    final uri = _buildUri(linkUrl, queryParameters);
+    return _executeRequest(() => http.delete(uri, headers: headers));
   }
 
-  Future<Either<StatuesRequest, dynamic>> postRequestwithfile(
+  Future<Either<ApiFailure, dynamic>> postRequestwithfile(
     String url,
     Map data,
     List<File>? files,
@@ -189,76 +211,69 @@ class Api {
     String token,
   ) async {
     try {
-      var request = http.MultipartRequest("POST", Uri.parse(url));
+      final uri = Uri.parse(url);
+      final request = http.MultipartRequest("POST", uri);
 
       request.headers['Authorization'] = 'Bearer $token';
       request.headers['Accept'] = 'application/json';
-      request.headers['Lang'] =
-          sharedPreferences!.getString("local") == "ar" ? "ar" : "en";
+      final lang =
+          sharedPreferences?.getString("local") == "ar" ? "ar" : "en";
+      request.headers['Lang'] = lang;
 
-      if (image != null) {
-        log("Adding image...");
-        var file =
+      if (image != null && await image.exists()) {
+        final file =
             await http.MultipartFile.fromPath('product_image', image.path);
         request.files.add(file);
-        log("Image path: ${image.path}");
       }
 
       if (files != null && files.isNotEmpty) {
-        log("Adding documents...");
         for (var file in files) {
-          request.files.add(
-            await http.MultipartFile.fromPath(
-              'document[]',
-              file.path,
-            ),
-          );
-          log("Document path: ${file.path}");
+          if (await file.exists()) {
+            request.files.add(
+              await http.MultipartFile.fromPath('document[]', file.path),
+            );
+          }
         }
       }
+
       data.forEach((key, value) {
-        request.fields[key] = value.toString();
+        if (value == null) return;
+        if (value is Iterable) {
+          final list = value.toList();
+          final baseKey = key.toString().endsWith('[]')
+              ? key.toString().substring(0, key.toString().length - 2)
+              : key.toString();
+          for (var i = 0; i < list.length; i++) {
+            request.fields['$baseKey[$i]'] = list[i].toString();
+          }
+        } else {
+          request.fields[key.toString()] = value.toString();
+        }
       });
 
-      log("Request files: ${request.files}");
-      log("Request fields: ${request.fields}");
-
-      var response = await request.send();
-      var responseData = await response.stream.bytesToString();
-      var jsonData = jsonDecode(responseData);
-
-      if (response.statusCode == 200) {
-        print(jsonData);
-        return right(jsonData);
-      } else {
-        print("Error: ${response.statusCode} - $jsonData");
-        switch (response.statusCode) {
-          case 400:
-            throw BadRequestException();
-          case 401:
-            throw UnauthorizedException();
-          case 403:
-            throw ForbiddenException();
-          case 404:
-            return left(StatuesRequest.serverException);
-          case 500:
-            log(jsonData.toString());
-            return left(StatuesRequest.serverError);
-          case 409:
-            throw ConflictException();
-          default:
-            log(jsonData.toString());
-            return left(StatuesRequest.defaultException);
-        }
-      }
+      final streamedResponse = await request.send().timeout(defaultTimeout);
+      final response = await http.Response.fromStream(streamedResponse);
+      return _processResponse(response);
     } on SocketException {
-      return left(StatuesRequest.socketException);
-    } on http.ClientException {
-      return left(StatuesRequest.clientException);
+      return left(const ApiFailure(
+        status: StatuesRequest.socketException,
+        message: 'No internet connection',
+      ));
+    } on http.ClientException catch (e) {
+      return left(ApiFailure(
+        status: StatuesRequest.clientException,
+        message: e.message,
+      ));
     } on TimeoutException {
-      return left(StatuesRequest.timeoutException);
+      return left(const ApiFailure(
+        status: StatuesRequest.timeoutException,
+        message: 'Request timeout',
+      ));
     } catch (e) {
-      return left(handleException(e));
+      return left(ApiFailure(
+        status: handleException(e),
+        message: e.toString(),
+      ));
     }
   }
 }

@@ -1,30 +1,46 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:ejary_cash/main.dart';
+import 'package:ejary_cash/data/model/user_model.dart';
+import 'package:ejary_cash/core/class/api_failure.dart';
+import 'package:ejary_cash/core/class/status_request.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  group('UserModel unit tests', () {
+    test('UserModel.fromJson handles null counts safely without string "null"', () {
+      final json = {
+        'id': 1,
+        'name': 'Test User',
+        'account_type': 'owner',
+        'owner_ads_count': null,
+        'owner_fav_ads_count': null,
+        'owner_views_ads_count': null,
+        'monthly_rent': null,
+      };
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+      final user = UserModel.fromJson(json);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+      expect(user.id, 1);
+      expect(user.name, 'Test User');
+      expect(user.accountType, 'owner');
+      expect(user.ownerAdsCount, '0');
+      expect(user.ownerFavAdsCount, '0');
+      expect(user.ownerViewsAdsCount, '0');
+      expect(user.monthlyRent, isNull);
+    });
+  });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  group('ApiFailure unit tests', () {
+    test('ApiFailure supports Map index operator safely', () {
+      final failure = ApiFailure(
+        status: StatuesRequest.unprocessableException,
+        statusCode: 422,
+        message: 'Validation error',
+        data: {'email': 'Email already taken'},
+      );
+
+      expect(failure['message'], 'Validation error');
+      expect(failure['status'], StatuesRequest.unprocessableException);
+      expect(failure['statusCode'], 422);
+      expect(failure['unknown_key'], isNull);
+    });
   });
 }

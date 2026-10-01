@@ -5,6 +5,9 @@ class OrderInfoController extends GetxController {
   OrderInfoModel ?orderInfoModel;
   @override
   void onInit() {
-orderInfoModel=Get.arguments["orderInfo"];    super.onInit();
+    if (Get.arguments is Map && Get.arguments["orderInfo"] != null) {
+      orderInfoModel = Get.arguments["orderInfo"];
+    }
+    super.onInit();
   }
 }

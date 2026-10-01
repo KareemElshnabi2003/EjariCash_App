@@ -16,7 +16,7 @@ class ContactController extends GetxController {
   SettingModel? settingModel;
   StatuesRequest statuesRequest = StatuesRequest.none;
 
-  SettingRemoteData settingRemoteData = SettingRemoteData(Get.put(Api()));
+  SettingRemoteData settingRemoteData = SettingRemoteData(Get.find<Api>());
   void messageHandleException(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
@@ -122,71 +122,69 @@ class ContactController extends GetxController {
     update();
   }
 
+  Future<void> _safeLaunch(Uri primary, [Uri? fallback]) async {
+    try {
+      final launched =
+          await launchUrl(primary, mode: LaunchMode.externalApplication);
+      if (!launched && fallback != null) {
+        await launchUrl(fallback, mode: LaunchMode.externalApplication);
+      }
+    } catch (_) {
+      if (fallback != null) {
+        try {
+          await launchUrl(fallback, mode: LaunchMode.externalApplication);
+          return;
+        } catch (_) {}
+      }
+      Get.snackbar(
+        'تنبيه',
+        'تعذر فتح الرابط المطلوب',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
   Future<void> urlLuncher(
     String name,
   ) async {
+    if (settingModel == null) return;
+
     if (name == "sms") {
-      final Uri url = Uri.parse('sms:${settingModel!.phone}');
-      if (!await launchUrl(url)) {
-        throw "can't launch $url";
-      }
+      final phone = settingModel!.phone ?? '';
+      await _safeLaunch(Uri.parse('sms:$phone'));
     } else if (name == "phone") {
-      final Uri url = Uri.parse('tel:${settingModel!.phone}');
-      if (!await launchUrl(url)) {
-        throw "can't launch $url";
-      }
+      final phone = settingModel!.phone ?? '';
+      await _safeLaunch(Uri.parse('tel:$phone'));
     } else if (name == "watsappNormal") {
-      final Uri url =
-          Uri.parse('whatsapp://send?phone=${settingModel!.whatsappPhone}');
-      if (!await launchUrl(url)) {
-        throw "can't launch $url";
-      }
+      final phone = (settingModel!.whatsappPhone ?? '')
+          .replaceAll('+', '')
+          .replaceAll(' ', '');
+      await _safeLaunch(
+        Uri.parse('whatsapp://send?phone=$phone'),
+        Uri.parse('https://wa.me/$phone'),
+      );
     } else if (name == "watsappWorks") {
-      final Uri url =
-          Uri.parse('whatsapp://send?phone=${settingModel!.whatsappBusiness}');
-      if (!await launchUrl(url)) {
-        throw "can't launch $url";
-      }
+      final phone = (settingModel!.whatsappBusiness ?? '')
+          .replaceAll('+', '')
+          .replaceAll(' ', '');
+      await _safeLaunch(
+        Uri.parse('whatsapp://send?phone=$phone'),
+        Uri.parse('https://wa.me/$phone'),
+      );
     } else if (name == "facebook") {
-      final Uri url = Uri.parse(
-          'https://m.facebook.com/whiteEagleEventCompany?mibextid=LQQJ4d');
-      if (!await launchUrl(url)) {
-        throw "can't launch $url";
-      }
+      await _safeLaunch(Uri.parse('https://www.facebook.com/ejaricash'));
     } else if (name == "instagram") {
-      final Uri url = Uri.parse(
-          'https://www.instagram.com/whiteeagle_event?igsh=NzI1d2Q5dnlqY20y&utm_source=qr');
-
-      if (!await launchUrl(url)) {
-        throw "can't launch $url";
-      }
+      await _safeLaunch(Uri.parse('https://www.instagram.com/ejaricash'));
     } else if (name == "twitter") {
-      final Uri url = Uri.parse('https://www.threads.net/@whiteeagle_event');
-
-      if (!await launchUrl(url)) {
-        throw "can't launch $url";
-      }
+      await _safeLaunch(Uri.parse('https://x.com/ejaricash'));
     } else if (name == "linkedin") {
-      final Uri url = Uri.parse(
-          'https://www.linkedin.com/company/white-eagle-event-company/');
-
-      if (!await launchUrl(url)) {
-        throw "can't launch $url";
-      }
+      await _safeLaunch(
+          Uri.parse('https://www.linkedin.com/company/ejaricash'));
     } else if (name == "tiktok") {
-      final Uri url = Uri.parse(
-          'https://www.tiktok.com/@whiteeagleevent?_t=8lDZLVLCod8&_r=1');
-
-      if (!await launchUrl(url)) {
-        throw "can't launch $url";
-      }
+      await _safeLaunch(Uri.parse('https://www.tiktok.com/@ejaricash'));
     } else if (name == "gmail") {
-      final Uri url = Uri.parse(
-          'mailto:${settingModel!.email}?subject=News&body=New plugin');
-
-      if (!await launchUrl(url)) {
-        throw "can't launch $url";
-      }
+      final email = settingModel!.email ?? '';
+      await _safeLaunch(Uri.parse('mailto:$email?subject=استفسار&body=مرحبا'));
     }
   }
 

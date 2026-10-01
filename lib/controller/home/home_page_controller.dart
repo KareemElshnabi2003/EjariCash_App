@@ -23,10 +23,10 @@ class HomePageController extends GetxController {
   StatuesRequest statuesRequest_3 = StatuesRequest.none;
   StatuesRequest statuesRequest_2 = StatuesRequest.none;
   StatuesRequest statuesRequest_4 = StatuesRequest.none;
-  RentRemoteData rentRemoteData = RentRemoteData(Get.put(Api()));
+  RentRemoteData rentRemoteData = RentRemoteData(Get.find<Api>());
 
-  AdsRemoteData adsRemoteData = AdsRemoteData(Get.put(Api()));
-  ProjectsRemoteData projectsRemoteData = ProjectsRemoteData(Get.put(Api()));
+  AdsRemoteData adsRemoteData = AdsRemoteData(Get.find<Api>());
+  ProjectsRemoteData projectsRemoteData = ProjectsRemoteData(Get.find<Api>());
 
   List<AdsModel> allUnites = [];
   List<PartenerModel> allProjects = [];
@@ -71,41 +71,6 @@ class HomePageController extends GetxController {
         ));
   }
 
-  Future<List<PartenerModel>> getAllProjects(context) async {
-    allProjects.clear();
-    statuesRequest_2 = StatuesRequest.loading;
-    update();
-    var response = await projectsRemoteData
-        .getAllProjects(sharedPreferences!.getString("token"));
-    print(" response ??? ${response}");
-
-    statuesRequest_2 = handlingData(response);
-
-    if (statuesRequest_2 == StatuesRequest.success) {
-      List responseBody = response['data'];
-      print("response :: $responseBody");
-      allProjects.addAll(responseBody.map((e) => PartenerModel.fromJson(e)));
-    } else if (statuesRequest_2 == StatuesRequest.unprocessableException) {
-      messageHandleException("${response['message']}", context);
-    } else if (statuesRequest_2 == StatuesRequest.socketException) {
-      messageHandleException(S.of(context).noInternetApi, context);
-    } else if (statuesRequest_2 == StatuesRequest.serverException) {
-      messageHandleException(S.of(context).serverException, context);
-    } else if (statuesRequest_2 == StatuesRequest.unExpectedException) {
-      messageHandleException(S.of(context).unExcepectedException, context);
-    } else if (statuesRequest_2 == StatuesRequest.defaultException) {
-      messageHandleException(S.of(context).errorPhoneUseBeforeApi, context);
-    } else if (statuesRequest_2 == StatuesRequest.serverError) {
-      messageHandleException("${response}", context);
-    } else if (statuesRequest_2 == StatuesRequest.timeoutException) {
-      messageHandleException(S.of(context).timeOutException, context);
-    } else if (statuesRequest_2 == StatuesRequest.unauthorizedException) {
-      messageHandleExceptionVisitor(S.of(context).errorUnAuthorized, context);
-    }
-    update();
-    return allProjects;
-  }
-
   void messageHandleException(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
@@ -144,20 +109,50 @@ class HomePageController extends GetxController {
         ));
   }
 
+  Future<List<PartenerModel>> getAllProjects(context) async {
+    statuesRequest_2 = StatuesRequest.loading;
+    update();
+    var response = await projectsRemoteData
+        .getAllProjects(sharedPreferences?.getString("token"));
+
+    statuesRequest_2 = handlingData(response);
+
+    if (statuesRequest_2 == StatuesRequest.success) {
+      List responseBody = response['data'] ?? [];
+      allProjects =
+          responseBody.map((e) => PartenerModel.fromJson(e)).toList();
+    } else if (statuesRequest_2 == StatuesRequest.unprocessableException) {
+      messageHandleException("${response['message']}", context);
+    } else if (statuesRequest_2 == StatuesRequest.socketException) {
+      messageHandleException(S.of(context).noInternetApi, context);
+    } else if (statuesRequest_2 == StatuesRequest.serverException) {
+      messageHandleException(S.of(context).serverException, context);
+    } else if (statuesRequest_2 == StatuesRequest.unExpectedException) {
+      messageHandleException(S.of(context).unExcepectedException, context);
+    } else if (statuesRequest_2 == StatuesRequest.defaultException) {
+      messageHandleException(S.of(context).errorPhoneUseBeforeApi, context);
+    } else if (statuesRequest_2 == StatuesRequest.serverError) {
+      messageHandleException("${response}", context);
+    } else if (statuesRequest_2 == StatuesRequest.timeoutException) {
+      messageHandleException(S.of(context).timeOutException, context);
+    } else if (statuesRequest_2 == StatuesRequest.unauthorizedException) {
+      messageHandleExceptionVisitor(S.of(context).errorUnAuthorized, context);
+    }
+    update();
+    return allProjects;
+  }
+
   Future<List<AdsModel>> getAllUnites(context) async {
-    allUnites.clear();
     statuesRequest_3 = StatuesRequest.loading;
     update();
     var response =
-        await adsRemoteData.getAdsHome(sharedPreferences!.getString("token"));
-    print(" response ??? ${response}");
+        await adsRemoteData.getAdsHome(sharedPreferences?.getString("token"));
 
     statuesRequest_3 = handlingData(response);
 
     if (statuesRequest_3 == StatuesRequest.success) {
-      List responseBody = response['data'];
-      print("response :: $responseBody");
-      allUnites.addAll(responseBody.map((e) => AdsModel.fromJson(e)));
+      List responseBody = response['data'] ?? [];
+      allUnites = responseBody.map((e) => AdsModel.fromJson(e)).toList();
     } else if (statuesRequest_3 == StatuesRequest.unprocessableException) {
       messageHandleException("${response['message']}", context);
     } else if (statuesRequest_3 == StatuesRequest.socketException) {
@@ -180,20 +175,18 @@ class HomePageController extends GetxController {
   }
 
   Future<List<AdsOwnerModel>> getAllAdsForOwner(context) async {
-    allAdsOwner.clear();
     statuesRequest_3 = StatuesRequest.loading;
     update();
     var response = await adsRemoteData
-        .getAllAdsOwner(sharedPreferences!.getString("token"));
-    log(" response ??? ${response}");
+        .getAllAdsOwner(sharedPreferences?.getString("token"));
 
     statuesRequest_3 = handlingData(response);
 
     if (statuesRequest_3 == StatuesRequest.success) {
-      List responseBody = response['data'];
-      print("response :: $responseBody");
-      allAdsOwner.addAll(responseBody.map((e) => AdsOwnerModel.fromJson(e)));
-      sharedPreferences!.setString("leangthAdsOwner", "${allAdsOwner.length}");
+      List responseBody = response['data'] ?? [];
+      allAdsOwner =
+          responseBody.map((e) => AdsOwnerModel.fromJson(e)).toList();
+      sharedPreferences?.setString("leangthAdsOwner", "${allAdsOwner.length}");
     } else if (statuesRequest_3 == StatuesRequest.unprocessableException) {
       messageHandleException("${response['message']}", context);
     } else if (statuesRequest_3 == StatuesRequest.socketException) {
@@ -216,19 +209,16 @@ class HomePageController extends GetxController {
   }
 
   Future<List<OrderInfoModel>> getMyRents(context) async {
-    myRentes.clear();
     statuesRequest_4 = StatuesRequest.loading;
     update();
     var response =
-        await rentRemoteData.getMyRents(sharedPreferences!.getString("token"));
-    log(" response ??? ${response}");
+        await rentRemoteData.getMyRents(sharedPreferences?.getString("token"));
 
     statuesRequest_4 = handlingData(response);
 
     if (statuesRequest_4 == StatuesRequest.success) {
-      List responseBody = response['data'];
-      print("response :: $responseBody");
-      myRentes.addAll(responseBody.map((e) => OrderInfoModel.fromJson(e)));
+      List responseBody = response['data'] ?? [];
+      myRentes = responseBody.map((e) => OrderInfoModel.fromJson(e)).toList();
     } else if (statuesRequest_4 == StatuesRequest.unprocessableException) {
       messageHandleException("${response['message']}", context);
     } else if (statuesRequest_4 == StatuesRequest.socketException) {
@@ -252,16 +242,11 @@ class HomePageController extends GetxController {
 
   @override
   void onInit() {
-    if (sharedPreferences!.getBool("visit") == false) {
+    final visited = sharedPreferences?.getBool("visit") ?? false;
+    if (!visited) {
       log("no visit");
-      // getAllProjects(Get.context!);
-      // getAllUnites(Get.context);
-      // getAllAdsForOwner(Get.context);
-      // getMyRents(Get.context);
     } else {
       log(" visit");
-      // getAllProjects(Get.context!);
-      // getAllUnites(Get.context);
     }
     super.onInit();
   }

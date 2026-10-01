@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:ejary_cash/controller/on_board_controller.dart';
 import 'package:ejary_cash/core/constant/colors.dart';
 import 'package:ejary_cash/core/constant/images.dart';
 import 'package:ejary_cash/main.dart';
@@ -63,9 +62,7 @@ class _SplashScreenState extends State<SplashScreen> {
             transition: Transition.fade,
             duration: const Duration(milliseconds: 1300));
       } else {
-        OnBoardController controller = Get.put(OnBoardController());
-        await controller.getAllUnites(context);
-        Get.to(() => const OnBoarding(),
+        Get.off(() => const OnBoarding(),
             transition: Transition.fade,
             duration: const Duration(milliseconds: 1300));
       }

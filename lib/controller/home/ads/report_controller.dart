@@ -16,7 +16,7 @@ class ReportController extends GetxController {
   String report = "";
   String? adsId;
   StatuesRequest statuesRequest = StatuesRequest.none;
-  AdsRemoteData adsRemoteData = AdsRemoteData(Get.put(Api()));
+  AdsRemoteData adsRemoteData = AdsRemoteData(Get.find<Api>());
 
 
   void messageHandleException(message, context) {
@@ -189,7 +189,15 @@ class ReportController extends GetxController {
 
   @override
   void onInit() {
-    adsId = Get.arguments['adsId'].toString();
+    if (Get.arguments is Map && Get.arguments['adsId'] != null) {
+      adsId = Get.arguments['adsId'].toString();
+    }
     super.onInit();
+  }
+
+  @override
+  void onClose() {
+    reportController.dispose();
+    super.onClose();
   }
 }

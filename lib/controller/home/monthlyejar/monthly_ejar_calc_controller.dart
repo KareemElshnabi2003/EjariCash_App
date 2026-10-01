@@ -41,7 +41,7 @@ class MonthlyEjarCalcController extends GetxController {
     "أخري"
   ];
   MonthluEjarRemoteData monthluEjarRemoteData =
-      MonthluEjarRemoteData(Get.put(Api()));
+      MonthluEjarRemoteData(Get.find<Api>());
   StatuesRequest statuesRequest = StatuesRequest.none;
   void changeValJop(val) {
     typeJop = val;
@@ -69,7 +69,7 @@ class MonthlyEjarCalcController extends GetxController {
     } else if (education == "درجة الدكتوراة") {
       educationId = "5";
     } else {
-      education = "6";
+      educationId = "6";
     }
     update();
   }
@@ -264,5 +264,16 @@ class MonthlyEjarCalcController extends GetxController {
       }
     }
     update();
+  }
+
+  @override
+  void onClose() {
+    monthlySalaryController.dispose();
+    typeOfJopController.dispose();
+    educationController.dispose();
+    monthlyDemandsController.dispose();
+    ageController.dispose();
+    numOfFamilyController.dispose();
+    super.onClose();
   }
 }

@@ -23,25 +23,24 @@ class LoginController extends GetxController {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   StatuesRequest statuesRequest = StatuesRequest.none;
-  RegisterRemoteData registerRemoteData = RegisterRemoteData(Get.put(Api()));
+  RegisterRemoteData registerRemoteData = RegisterRemoteData(Get.find<Api>());
 
   bool showPass_1 = true;
   UserModel? userModel;
   String? tokenDevice;
+
   Future<void> getToken() async {
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-    tokenDevice = await messaging.getToken();
+    try {
+      FirebaseMessaging messaging = FirebaseMessaging.instance;
+      tokenDevice = await messaging.getToken();
+    } catch (_) {
+      tokenDevice = null;
+    }
   }
-  //+9665XXXXXXXX or 05XXXXXXXX
 
   void showPassword_1() {
-    if (showPass_1 == false) {
-      showPass_1 = true;
-      update();
-    } else {
-      showPass_1 = false;
-      update();
-    }
+    showPass_1 = !showPass_1;
+    update();
   }
 
   String? emailValidate(String val, context) {
@@ -49,127 +48,125 @@ class LoginController extends GetxController {
       return S.of(context).errorEmail_1;
     } else if (!val.isEmail) {
       return S.of(context).errorEmail_2;
-    } else if (val.contains(RegExp(r'[\u0600-\u06FF]'))) {
-      return S.of(context).errorEmail_3;
-    } else {
-      return null;
     }
+    return null;
   }
 
-  String? passwordValidate(String val, context) {
+  String? passValidate(String val, context) {
     if (val.isEmpty) {
       return S.of(context).errorPass_1;
     } else if (val.length < 8) {
       return S.of(context).errorPass_2;
-    } else if (val.length > 20) {
-      return S.of(context).errorPass_3;
-    } else {
-      return null;
     }
+    return null;
   }
 
   void messageHandleException(message, context) {
     Get.defaultDialog(
-        title: S.of(context).error,
-        content: Column(
-          children: [
-            Text(
-              message,
-              style: GoogleFonts.tajawal(
-                  fontSize: 3.5.w,
-                  color: LightMode.blackColor,
-                  fontWeight: FontWeight.w500),
-            ),
-            InkWell(
-              onTap: () {
-                Get.back();
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: LightMode.yellowColor,
-                  borderRadius: BorderRadius.circular(3.w),
-                ),
-                width: 30.w,
-                height: 5.h,
-                child: Center(
-                  child: Text(
-                    S.of(context).tryAgain,
-                    style: GoogleFonts.tajawal(
-                        fontSize: 4.w,
-                        color: LightMode.whiteColor,
-                        fontWeight: FontWeight.w500),
-                  ),
+      title: S.of(context).error,
+      content: Column(
+        children: [
+          Text(
+            message,
+            style: GoogleFonts.tajawal(
+                fontSize: 3.5.w,
+                color: LightMode.blackColor,
+                fontWeight: FontWeight.w500),
+          ),
+          InkWell(
+            onTap: () {
+              Get.back();
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: LightMode.yellowColor,
+                borderRadius: BorderRadius.circular(3.w),
+              ),
+              width: 30.w,
+              height: 5.h,
+              child: Center(
+                child: Text(
+                  S.of(context).tryAgain,
+                  style: GoogleFonts.tajawal(
+                      fontSize: 4.w,
+                      color: LightMode.whiteColor,
+                      fontWeight: FontWeight.w500),
                 ),
               ),
             ),
-          ],
-        ));
+          ),
+        ],
+      ),
+    );
   }
 
   void messageHandleNotVerify(message, context) {
     Get.defaultDialog(
-        title: S.of(context).error,
-        content: Column(
-          children: [
-            Text(
-              message,
-              style: GoogleFonts.tajawal(
-                  fontSize: 3.5.w,
-                  color: LightMode.blackColor,
-                  fontWeight: FontWeight.w500),
-            ),
-            InkWell(
-              onTap: () {
-                Get.to(() => const VerifyCodeActivate());
-                // Get.back();
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: LightMode.yellowColor,
-                  borderRadius: BorderRadius.circular(3.w),
-                ),
-                width: 30.w,
-                height: 5.h,
-                child: Center(
-                  child: Text(
-                    S.of(context).verify,
-                    style: GoogleFonts.tajawal(
-                        fontSize: 4.w,
-                        color: LightMode.whiteColor,
-                        fontWeight: FontWeight.w500),
-                  ),
+      title: S.of(context).error,
+      content: Column(
+        children: [
+          Text(
+            message,
+            style: GoogleFonts.tajawal(
+                fontSize: 3.5.w,
+                color: LightMode.blackColor,
+                fontWeight: FontWeight.w500),
+          ),
+          InkWell(
+            onTap: () {
+              Get.off(() => const VerifyCodeActivate(), arguments: {
+                "email": emailController.text.trim(),
+                "password": passwordController.text,
+              });
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: LightMode.yellowColor,
+                borderRadius: BorderRadius.circular(3.w),
+              ),
+              width: 30.w,
+              height: 5.h,
+              child: Center(
+                child: Text(
+                  S.of(context).verify,
+                  style: GoogleFonts.tajawal(
+                      fontSize: 4.w,
+                      color: LightMode.whiteColor,
+                      fontWeight: FontWeight.w500),
                 ),
               ),
             ),
-          ],
-        ));
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> login(context) async {
     if (loginGlobalKey.currentState!.validate()) {
       statuesRequest = StatuesRequest.loading;
       update();
+
       var response = await registerRemoteData.login(
-        emailController.text,
+        emailController.text.trim(),
         passwordController.text,
-        tokenDevice
+        tokenDevice,
       );
-      print(" response ??? ${response}");
 
       statuesRequest = handlingData(response);
 
       if (statuesRequest == StatuesRequest.success &&
+          response['data'] != null &&
           response['data']['status'] == "pending") {
-        messageHandleNotVerify(response['message'], context);
+        messageHandleNotVerify(response['message'] ?? '', context);
       } else if (statuesRequest == StatuesRequest.success &&
+          response['data'] != null &&
           response['data']['status'] != "pending") {
         Map<String, dynamic> responseBody = response['data'];
-        print("response :: $responseBody");
         userModel = UserModel.fromJson(responseBody);
 
         sharedPreferences!.setString("phone", "${userModel!.mobile}");
         sharedPreferences!.setString("email", "${userModel!.email}");
-
         sharedPreferences!.setString("token", "${userModel!.token}");
         sharedPreferences!.setString("bio", "${userModel!.bio}");
         sharedPreferences!.setString("birthDate", "${userModel!.birthdate}");
@@ -177,16 +174,21 @@ class LoginController extends GetxController {
         sharedPreferences!.setString("img", "${userModel!.photoProfile}");
         sharedPreferences!.setString("linkedin", "${userModel!.linkedinLink}");
         sharedPreferences!.setString("fcmId", "${userModel!.fcmId}");
-        sharedPreferences!
-            .setString("accountType", "${userModel!.accountType}");
+        sharedPreferences!.setString("accountType", "${userModel!.accountType}");
         sharedPreferences!.setString("status", "${userModel!.status}");
         sharedPreferences!.setBool("visit", false);
-
         sharedPreferences!.setString("pageStart", "Home");
-        sharedPreferences!.setString("typeOfUser", "مستأجر");
-        sharedPreferences!.setString("fav", userModel!.ownerFavAdsCount!);
-        sharedPreferences!.setString("countAds", userModel!.ownerAdsCount!);
-        sharedPreferences!.setString("view", userModel!.ownerViewsAdsCount!);
+
+        // Set real role code dynamically based on accountType
+        final role = (userModel!.accountType == "مالك" ||
+                userModel!.accountType == "owner")
+            ? "owner"
+            : "tenant";
+        sharedPreferences!.setString("typeOfUser", role);
+
+        sharedPreferences!.setString("fav", userModel?.ownerFavAdsCount ?? "0");
+        sharedPreferences!.setString("countAds", userModel?.ownerAdsCount ?? "0");
+        sharedPreferences!.setString("view", userModel?.ownerViewsAdsCount ?? "0");
 
         Get.offAll(() => const Home(),
             transition: Transition.leftToRightWithFade,
@@ -210,5 +212,12 @@ class LoginController extends GetxController {
       }
     }
     update();
+  }
+
+  @override
+  void onClose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.onClose();
   }
 }

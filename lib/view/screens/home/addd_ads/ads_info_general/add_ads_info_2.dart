@@ -219,7 +219,7 @@ Widget dropDowenListArea(title, value, List<LocationModel> valueList,
               valueList.length,
               (index) => DropdownMenuItem(
                   onTap: () {
-                    AddAdsController controller = Get.put(AddAdsController());
+                    AddAdsController controller = Get.find<AddAdsController>();
                     controller.areaId = valueList[index].id!;
                     Get.appUpdate();
                   },
@@ -275,7 +275,7 @@ Widget dropDowenListCategory(title, value, List<LocationModel> valueList,
               valueList.length,
               (index) => DropdownMenuItem(
                   onTap: () {
-                    AddAdsController controller = Get.put(AddAdsController());
+                    AddAdsController controller = Get.find<AddAdsController>();
                     controller.categoryId = valueList[index].id!;
                     Get.appUpdate();
                   },
@@ -331,7 +331,7 @@ Widget dropDowenListCity(title, value, List<LocationModel> valueList,
               valueList.length,
               (index) => DropdownMenuItem(
                   onTap: () {
-                    AddAdsController controller = Get.put(AddAdsController());
+                    AddAdsController controller = Get.find<AddAdsController>();
                     controller.cityId = valueList[index].id!;
                     Get.appUpdate();
                   },

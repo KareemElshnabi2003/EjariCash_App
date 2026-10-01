@@ -1,16 +1,148 @@
-# ejary_cash
+# Ejari Cash (إيجاري كاش) 📱🏢
 
-A new Flutter project.
+> **تطبيق إيجاري كاش** هو منصة عقارية ومالية متكاملة مصممة للهواتف الذكية (Android & iOS) بنظام Flutter، تتيح للمستخدمين (مستأجرين وملاك ووسطاء عقاريين) إدارة وتصفح العقارات، طلب خطط الإيجار الشهري، إضافة العقارات والوحدات، وإدارة الطلبات بكل مرونة وموثوقية.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## 📑 جدول المحتويات (Table of Contents)
+- [نظرة عامة على المشروع (Overview)](#-نظرة-عامة-على-المشروع-overview)
+- [الهندسة المعمارية (Architecture & Design Pattern)](#-الهندسة-المعمارية-architecture--design-pattern)
+- [المميزات الرئيسية (Key Features)](#-المميزات-الرئيسية-key-features)
+- [التحسينات والإصلاحات التقنية (Refactoring & Bug Fixes)](#-التحسينات-والإصلاحات-التقنية-refactoring--bug-fixes)
+- [حزم ومكتبات المشروع (Tech Stack & Dependencies)](#-حزم-ومكتبات-المشروع-tech-stack--dependencies)
+- [متطلبات التشغيل والتثبيت (Setup & Installation)](#-متطلبات-التشغيل-والتثبيت-setup--installation)
+- [الاختبارات وضمان الجودة (Testing & Quality Assurance)](#-الاختبارات-وضمان-الجودة-testing--quality-assurance)
 
-A few resources to get you started if this is your first Flutter project:
+---
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## 🌟 نظرة عامة على المشروع (Overview)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+تطبيق **Ejari Cash** يقدم حلاً عملياً لتسهيل عمليات الإيجار العقاري:
+* **للمستأجرين (Tenants):** تصفح الوحدات العقارية، حفظ الوحدات المفضلة، حساب ودفع خطط الإيجار الشهري، وتقديم طلبات الإيجار بمختلف أنواعها (شخصي، شريك، إعلان).
+* **للملاك والوسطاء (Owners & Brokers):** إضافة الوحدات العقارية بمواصفات دقيقة (صك الملكية، رقم رخصة فال، تفاصيل الوحدة، المرافق، الصور)، ومتابعة حالة العقارات والطلبات.
+
+---
+
+## 🏛️ الهندسة المعمارية (Architecture & Design Pattern)
+
+تم تصميم التطبيق وفق معمارية **GetX Pattern** مع تقسيم واضح للمسؤوليات (Clean Layered Architecture):
+
+```
+lib/
+├── core/                   # البنية التحتية والأساسات المشتركة
+│   ├── class/             # طبقة الشبكات (Api, ApiFailure, StatuesRequest)
+│   ├── constant/          # الثوابت، الألوان، الصور، وروابط الـ Endpoints
+│   ├── function/          # دوال المعالجة العامة (handlingData, checkInternet)
+│   └── localization/      # إعدادات اللغات والترجمة
+├── data/
+│   ├── data source/       # طبقة الوصول للبيانات والـ Remote Data Sources
+│   └── model/             # نماذج البيانات (UserModel, AdsModel, etc.)
+├── controller/             # متحكمات الحالة وإدارة دورة الحياة (GetxControllers)
+│   ├── auth/              # تسجيل الدخول، إنشاء الحساب، استعادة كلمة المرور
+│   ├── home/              # الصفحة الرئيسية، الإعلانات، المفضلة، الطلبات، الملف الشخصي
+│   └── add_ads/           # تدفق إضافة العقار والتحقق من البيانات
+├── generated/              # ملفات الترجمة المولدة تلقائياً (intl)
+└── view/                   # واجهات المستخدم (Screens & Reusable Widgets)
+```
+
+### مميزات طبقة الشبكات (Unified Networking Layer):
+* **عقد خطأ موحد (`ApiFailure`):** يوفر كائناً آمناً يحمل كود الحالة والرسالة وبيانات الخطأ، مع دعم مؤشر الخريطة `[]` لمنع أي `NoSuchMethodError` عند استخراج رسائل الأخطاء.
+* **تنفيذ موحد للطلبات (`_executeRequest`):** يدعم `GET`, `POST`, `PUT`, `DELETE` و `Multipart` بمهلة استجابة موحدة (20 ثانية) واحتساب أي كود `2xx` كنجاح، مع معالجة استجابات `204 No Content` دون فشل فك ترميز JSON.
+* **حقن الاعتمادية الآمن (Dependency Injection):** تسجيل خدمة `Api` مرة واحدة بشكل دائم عبر `Get.put<Api>(Api(), permanent: true)` في `main.dart` واستدعاؤها عبر `Get.find<Api>()`.
+
+---
+
+## 🚀 المميزات الرئيسية (Key Features)
+
+1. **إدارة المصادقة والأدوار (Role-based Authentication):**
+   - تسجيل دخول وإنشاء حساب مع حفظ وتحديد دور المستخدم تلقائياً (`owner` / `tenant`).
+   - تدفق آمن لاستعادة كلمة المرور والتحقق من رمز OTP المكون من أرقام صحيحة.
+   - تسجيل خروج آمن يمسح جلسة المستخدم والتوكن وبياناته الحساسة مع الاحتفاظ بإعدادات اللغة.
+2. **إضافة العقارات (Property Publishing Flow):**
+   - واجهة مخصصة لكل من المالك والوسيط العقاري.
+   - رفع آمن للصور الفردية والمتعددة مع ضغط الصور والتحقق من الحجم والحد الأقصى.
+   - تحديد المرافق بدقة عبر مساعد يمنع التكرار ويدعم التحديد والإلغاء السلس.
+   - حماية ضد النقر المزدوج (Double-Submit Protection) في جميع أزرار الحفظ والإرسال.
+3. **تصفح الإعلانات وتصفيتها (Ads & Filtering):**
+   - تصفية متقدمة حسب نوع السعر، عدد الغرف، ونطاق الأسعار بدون تشويه لروابط الـ URL.
+   - الاحتفاظ بالبيانات القديمة وعدم مسحها في حال حدوث انقطاع في الاتصال بالإنترنت.
+4. **المفضلة الذكية (Optimistic Favorites):**
+   - تحديث واجهة المستخدم فورياً عند الإضافة أو الحذف من المفضلة، مع التراجع التلقائي (Rollback) في حال فشل الطلب بالخادم.
+5. **حاسبة الإيجار الشهري والطلبات (Monthly Rent & Orders):**
+   - تحويل آمن للأرقام والمدخلات المالية بدون انهيار للتطبيق، مع استكمال إجراءات التحقق من النماذج.
+6. **دعم كامل للغتين (Arabic & English Localization):**
+   - تبديل سلس للغة والاتجاهات RTL / LTR باستخدام حزمة `intl`.
+
+---
+
+## 🛠️ التحسينات والإصلاحات التقنية (Refactoring & Bug Fixes)
+
+تمت مراجعة ومعالجة جميع المشاكل التقنية في المشروع بدقة:
+- [x] **توحيد الـ API بالكامل:** مهلة موحدة (20s)، دعم كود 2xx، فك تشفير JSON آمن، معالجة استجابات الخادم 500 و 422، وحذف السجلات الحساسة.
+- [x] **تأمين البيانات وعقد الاستجابة:** منع أخطاء النوع والـ Null في `UserModel`، واستخدام `ApiFailure` لعقد الأخطاء.
+- [x] **تنظيف دورة حياة الكائنات (Lifecycle Cleanup):** إضافة `onClose` لجميع المتحكمات للتخلص من `TextEditingController` والمؤقتات `Timer` لمنع تسريب الذاكرة (Memory Leaks).
+- [x] **إصلاح هوية حزم أندرويد (Android Identity):** نقل `MainActivity.kt` إلى الحزمة الصحيحة `com.ejaryCash.app` ومطابقتها مع `applicationId`.
+- [x] **تأمين إصدار الإنتاج (Release Signing):** إعداد مرن لتوقيع التطبيق عبر `key.properties` مع الاحتفاظ ببيانات التوقيع الحساسة خارج مستودع Git.
+- [x] **إغلاق حركة المرور غير المشفرة:** ضبط `usesCleartextTraffic="false"` وتحديث أذونات النظام بما يتوافق مع سياسات متجر Google Play الحديثة.
+- [x] **توحيد معرفات iOS:** توحيد `PRODUCT_BUNDLE_IDENTIFIER` إلى `com.ejariCash.ejariCash` ومزامنة رقم الإصدار مع `pubspec.yaml`.
+- [x] **إزالة الملفات الميتة:** حذف ملفات الاختبار المؤقتة غير المستخدمة وتنظيف مستودع الأكواد من مخرجات البناء (`ios/build`).
+
+---
+
+## 📦 حزم ومكتبات المشروع (Tech Stack & Dependencies)
+
+* **الإطار البرمجي:** Flutter (Dart SDK `>=3.4.3 <4.0.0`)
+* **إدارة الحالة والتنقل:** `get: ^4.6.6`
+* **الشبكات:** `http`, `dartz`
+* **التعامل مع الصور والملفات:** `image_picker`, `cached_network_image`
+* **التخزين المحلي:** `shared_preferences`
+* **الخطوط والواجهات:** `google_fonts`, `screen_go`, `dotted_border`
+* **التحقق وتأكيد الرموز:** `flutter_otp_text_field`
+* **الترجمة:** `flutter_localizations`, `intl`
+
+---
+
+## ⚙️ متطلبات التشغيل والتثبيت (Setup & Installation)
+
+### المتطلبات الأساسية:
+- Flutter SDK (الإصدار 3.22 أو أحدث)
+- Android Studio / VS Code
+- Git
+
+### خطوات التثبيت:
+1. استنساخ المستودع:
+   ```bash
+   git clone https://github.com/KareemElshnabi2003/EjariCash_App.git
+   cd EjariCash_App
+   ```
+2. تثبيت الحزم والمكتبات:
+   ```bash
+   flutter pub get
+   ```
+3. تشغيل التطبيق في بيئة التطوير:
+   ```bash
+   flutter run
+   ```
+4. تشغيل التطبيق مع تعيين عنوان خادم مخصص (Optional):
+   ```bash
+   flutter run --dart-define=BASE_URL=https://ejaricash.online/api
+   ```
+
+---
+
+## 🧪 الاختبارات وضمان الجودة (Testing & Quality Assurance)
+
+لتشغيل الاختبارات الآلية (Unit Tests):
+```bash
+flutter test
+```
+
+لفحص صحة الكود ومطابقته لمعايير الجودة (Static Analysis):
+```bash
+flutter analyze
+```
+
+---
+
+## 📄 الترخيص (License)
+هذا المشروع مخصص ومطور كمنصة لعقارات إيجاري كاش. جميع الحقوق محفوظة ©.

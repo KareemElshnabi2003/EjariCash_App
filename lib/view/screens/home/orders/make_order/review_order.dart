@@ -71,7 +71,9 @@ class ReviewOrder extends StatelessWidget {
               ),
             ),
             btnClick(S.of(context).homePage, () {
-              HomeController homeController = Get.put(HomeController());
+              final homeController = Get.isRegistered<HomeController>()
+                  ? Get.find<HomeController>()
+                  : Get.put(HomeController());
               homeController.currentIndex = 0;
               Get.offAll(() => const Home(),
                   transition: Transition.leftToRightWithFade,

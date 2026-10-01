@@ -29,7 +29,7 @@ class UpdateProfileController extends GetxController {
   TextEditingController linkedInController = TextEditingController();
   TextEditingController passwordDeleteAccount = TextEditingController();
   StatuesRequest statuesRequest = StatuesRequest.none;
-  RegisterRemoteData registerRemoteData = RegisterRemoteData(Get.put(Api()));
+  RegisterRemoteData registerRemoteData = RegisterRemoteData(Get.find<Api>());
   bool showPass_1 = true;
   bool showPass_2 = true;
   bool showPass_3 = true;
@@ -65,7 +65,7 @@ class UpdateProfileController extends GetxController {
       context: context,
       initialDate: DateTime.now(), // current date
       firstDate: DateTime(1930), // starting date
-      lastDate: DateTime(2050), // ending date
+      lastDate: DateTime.now(), // ending date (no future birth dates)
     );
 
     if (pickedDate != null && pickedDate != _selectedDate) {
@@ -311,155 +311,20 @@ class UpdateProfileController extends GetxController {
   }
 
   Future<void> deleteAccount(context) async {
-    enable = false;
-    var response = await registerRemoteData.deleteAccount(
-        sharedPreferences!.getString("token"), passwordDeleteAccount.text);
-    print(response);
-
-    statuesRequest = handlingData(response);
-    if (statuesRequest == StatuesRequest.success) {
-      dynamic responseBody = response;
-      print("response :: $responseBody");
-
-      sharedPreferences!.clear();
-      enable = true;
-      Get.off(() => const MainAuth());
-    } else if (statuesRequest == StatuesRequest.unprocessableException) {
-      messageHandleException("${response['message']}", context);
-    } else if (statuesRequest == StatuesRequest.socketException) {
-      messageHandleException(S.of(context).noInternetApi, context);
-    } else if (statuesRequest == StatuesRequest.serverException) {
-      messageHandleException(S.of(context).serverException, context);
-    } else if (statuesRequest == StatuesRequest.unExpectedException) {
-      messageHandleException(S.of(context).unExcepectedException, context);
-    } else if (statuesRequest == StatuesRequest.defaultException) {
-      messageHandleException(S.of(context).errorPhoneUseBeforeApi, context);
-    } else if (statuesRequest == StatuesRequest.serverError) {
-      messageHandleException("${response}", context);
-    } else if (statuesRequest == StatuesRequest.timeoutException) {
-      messageHandleException(S.of(context).timeOutException, context);
-    } else if (statuesRequest == StatuesRequest.unauthorizedException) {
-      messageHandleException(S.of(Get.context!).error, context);
+    if (passwordDeleteAccount.text.trim().isEmpty) {
+      messageHandleException(S.of(context).password, context);
+      return;
     }
-
+    enable = false;
     update();
-  }
-
-  void messageToDeleteAccount() {
-    Get.defaultDialog(
-        title: S.of(Get.context!).deleteAccount,
-        titleStyle: TextStyle(
-            fontSize: 5.w,
-            fontWeight: FontWeight.w700,
-            color: LightMode.blackColor),
-        content: SizedBox(
-          width: 90.w,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "${S.of(Get.context!).currrentPass} : ",
-                style: TextStyle(
-                    fontSize: 4.w,
-                    fontWeight: FontWeight.w500,
-                    color: LightMode.blackColor),
-              ),
-              Container(
-                // width: 90.w,
-                // padding: EdgeInsets.only(top: 3.w, bottom: 3.w),
-                margin: EdgeInsets.only(top: 5.w, right: 7.w, left: 7.w),
-                color: LightMode.fillTextFieldColor,
-                height: 6.h,
-                child: textFailed(
-                    passwordDeleteAccount,
-                    TextInputType.visiblePassword,
-                    false,
-                    S.of(Get.context!).password,
-                    false,
-                    null, (val) {
-                  return null;
-                }),
-              ),
-              SizedBox(
-                height: 5.w,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  InkWell(
-                    onTap: enable == false
-                        ? () {}
-                        : () async {
-                            await deleteAccount(Get.context);
-                            passwordDeleteAccount.clear();
-                          },
-                    child: Container(
-                      alignment: Alignment.center,
-                      width: 30.w,
-                      height: 5.h,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4.w),
-                          border: Border.all(
-                              color: LightMode.yellowColor, width: 2),
-                          color: LightMode.yellowColor),
-                      child: Text(
-                        S.of(Get.context!).deleteAccount,
-                        style: TextStyle(
-                            fontSize: 4.w,
-                            fontWeight: FontWeight.w500,
-                            color: LightMode.whiteColor),
-                      ),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Get.back();
-                      passwordDeleteAccount.clear();
-                    },
-                    child: Container(
-                      alignment: Alignment.center,
-                      width: 30.w,
-                      height: 5.h,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4.w),
-                        border:
-                            Border.all(color: LightMode.yellowColor, width: 2),
-                      ),
-                      child: Text(
-                        S.of(Get.context!).cancel,
-                        style: TextStyle(
-                            fontSize: 4.w,
-                            fontWeight: FontWeight.w500,
-                            color: LightMode.yellowColor),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ));
-  }
-
-  Future<void> changePassword(context) async {
-    // sharedPreferences!.clear();
-    if (changePassGlobalKey.currentState!.validate()) {
-      statuesRequest = StatuesRequest.loading;
-      update();
-      var response = await registerRemoteData.changePassword(
-        sharedPreferences!.getString("token"),
-        passwordController.text,
-        newpasswordController.text,
-        newpasswordConfirmationController.text,
-      );
-      print(response);
+    try {
+      var response = await registerRemoteData.deleteAccount(
+          sharedPreferences!.getString("token"), passwordDeleteAccount.text);
 
       statuesRequest = handlingData(response);
       if (statuesRequest == StatuesRequest.success) {
-        dynamic responseBody = response;
-        print("response :: $responseBody");
-
-        Get.offAll(() => const Home());
+        sharedPreferences!.clear();
+        Get.off(() => const MainAuth());
       } else if (statuesRequest == StatuesRequest.unprocessableException) {
         messageHandleException("${response['message']}", context);
       } else if (statuesRequest == StatuesRequest.socketException) {
@@ -477,26 +342,182 @@ class UpdateProfileController extends GetxController {
       } else if (statuesRequest == StatuesRequest.unauthorizedException) {
         messageHandleException(S.of(context).error, context);
       }
+    } finally {
+      enable = true;
+      update();
     }
-    update();
-  }
 
-  @override
-  void onInit() {
-    nameController.text = sharedPreferences!.getString("name") == "null"
-        ? ""
-        : sharedPreferences!.getString("name")!;
-    birthDateController.text =
-        sharedPreferences!.getString("birthDate") == "null"
-            ? ""
-            : sharedPreferences!.getString("birthDate")!;
-    bioController.text = sharedPreferences!.getString("bio") == "null"
-        ? ""
-        : sharedPreferences!.getString("birthDate")!;
-    linkedInController.text = sharedPreferences!.getString("linkedin") == "null"
-        ? ""
-        : sharedPreferences!.getString("linkedin")!;
+    void messageToDeleteAccount() {
+      Get.defaultDialog(
+          title: S.of(Get.context!).deleteAccount,
+          titleStyle: TextStyle(
+              fontSize: 5.w,
+              fontWeight: FontWeight.w700,
+              color: LightMode.blackColor),
+          content: SizedBox(
+            width: 90.w,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "${S.of(Get.context!).currrentPass} : ",
+                  style: TextStyle(
+                      fontSize: 4.w,
+                      fontWeight: FontWeight.w500,
+                      color: LightMode.blackColor),
+                ),
+                Container(
+                  // width: 90.w,
+                  // padding: EdgeInsets.only(top: 3.w, bottom: 3.w),
+                  margin: EdgeInsets.only(top: 5.w, right: 7.w, left: 7.w),
+                  color: LightMode.fillTextFieldColor,
+                  height: 6.h,
+                  child: textFailed(
+                      passwordDeleteAccount,
+                      TextInputType.visiblePassword,
+                      false,
+                      S.of(Get.context!).password,
+                      false,
+                      null, (val) {
+                    return null;
+                  }),
+                ),
+                SizedBox(
+                  height: 5.w,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    InkWell(
+                      onTap: enable == false
+                          ? () {}
+                          : () async {
+                              await deleteAccount(Get.context);
+                              passwordDeleteAccount.clear();
+                            },
+                      child: Container(
+                        alignment: Alignment.center,
+                        width: 30.w,
+                        height: 5.h,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4.w),
+                            border: Border.all(
+                                color: LightMode.yellowColor, width: 2),
+                            color: LightMode.yellowColor),
+                        child: Text(
+                          S.of(Get.context!).deleteAccount,
+                          style: TextStyle(
+                              fontSize: 4.w,
+                              fontWeight: FontWeight.w500,
+                              color: LightMode.whiteColor),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Get.back();
+                        passwordDeleteAccount.clear();
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        width: 30.w,
+                        height: 5.h,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4.w),
+                          border: Border.all(
+                              color: LightMode.yellowColor, width: 2),
+                        ),
+                        child: Text(
+                          S.of(Get.context!).cancel,
+                          style: TextStyle(
+                              fontSize: 4.w,
+                              fontWeight: FontWeight.w500,
+                              color: LightMode.yellowColor),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ));
+    }
 
-    super.onInit();
+    Future<void> changePassword(context) async {
+      // sharedPreferences!.clear();
+      if (changePassGlobalKey.currentState!.validate()) {
+        statuesRequest = StatuesRequest.loading;
+        update();
+        var response = await registerRemoteData.changePassword(
+          sharedPreferences!.getString("token"),
+          passwordController.text,
+          newpasswordController.text,
+          newpasswordConfirmationController.text,
+        );
+        print(response);
+
+        statuesRequest = handlingData(response);
+        if (statuesRequest == StatuesRequest.success) {
+          dynamic responseBody = response;
+          print("response :: $responseBody");
+
+          Get.offAll(() => const Home());
+        } else if (statuesRequest == StatuesRequest.unprocessableException) {
+          messageHandleException("${response['message']}", context);
+        } else if (statuesRequest == StatuesRequest.socketException) {
+          messageHandleException(S.of(context).noInternetApi, context);
+        } else if (statuesRequest == StatuesRequest.serverException) {
+          messageHandleException(S.of(context).serverException, context);
+        } else if (statuesRequest == StatuesRequest.unExpectedException) {
+          messageHandleException(S.of(context).unExcepectedException, context);
+        } else if (statuesRequest == StatuesRequest.defaultException) {
+          messageHandleException(S.of(context).errorPhoneUseBeforeApi, context);
+        } else if (statuesRequest == StatuesRequest.serverError) {
+          messageHandleException("${response}", context);
+        } else if (statuesRequest == StatuesRequest.timeoutException) {
+          messageHandleException(S.of(context).timeOutException, context);
+        } else if (statuesRequest == StatuesRequest.unauthorizedException) {
+          messageHandleException(S.of(context).error, context);
+        }
+      }
+      update();
+    }
+
+    @override
+    void onInit() {
+      nameController.text = (sharedPreferences!.getString("name") == null ||
+              sharedPreferences!.getString("name") == "null")
+          ? ""
+          : sharedPreferences!.getString("name")!;
+      birthDateController.text =
+          (sharedPreferences!.getString("birthDate") == null ||
+                  sharedPreferences!.getString("birthDate") == "null")
+              ? ""
+              : sharedPreferences!.getString("birthDate")!;
+      bioController.text = (sharedPreferences!.getString("bio") == null ||
+              sharedPreferences!.getString("bio") == "null")
+          ? ""
+          : sharedPreferences!.getString("bio")!;
+      linkedInController.text =
+          (sharedPreferences!.getString("linkedin") == null ||
+                  sharedPreferences!.getString("linkedin") == "null")
+              ? ""
+              : sharedPreferences!.getString("linkedin")!;
+
+      super.onInit();
+    }
+
+    @override
+    void onClose() {
+      nameController.dispose();
+      passwordController.dispose();
+      newpasswordController.dispose();
+      newpasswordConfirmationController.dispose();
+      birthDateController.dispose();
+      bioController.dispose();
+      linkedInController.dispose();
+      passwordDeleteAccount.dispose();
+      super.onClose();
+    }
   }
 }

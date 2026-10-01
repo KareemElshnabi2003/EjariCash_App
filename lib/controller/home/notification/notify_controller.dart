@@ -16,7 +16,8 @@ class NotifyController extends GetxController {
   List<NotificationModel> notifycationsList = [];
   StatuesRequest statuesRequest = StatuesRequest.none;
   NotificationRemoteData settingRemoteData =
-      NotificationRemoteData(Get.put(Api()));
+      NotificationRemoteData(Get.find<Api>());
+
   void messageHandleException(message, context) {
     Get.defaultDialog(
       title: S.of(context).error,
@@ -55,6 +56,7 @@ class NotifyController extends GetxController {
       ),
     );
   }
+
   void messageHandleExceptionVisitor(message, context) {
     Get.defaultDialog(
         title: S.of(context).error,
@@ -94,47 +96,47 @@ class NotifyController extends GetxController {
   }
 
   Future<void> sendNotification(context) async {
-    print("notify");
+    final token = sharedPreferences?.getString("token");
+    if (token == null) return;
+
     statuesRequest = StatuesRequest.loading;
     update();
-    print(sharedPreferences!.getString("token"));
-    var response = await settingRemoteData
-        .getNotification(sharedPreferences!.getString("token"));
-    print(" response ??? ${response}");
 
+    var response = await settingRemoteData.getNotification(token);
     statuesRequest = handlingData(response);
 
     if (statuesRequest == StatuesRequest.success) {
-      List responseBody = response['data'];
+      List responseBody = response['data'] ?? [];
+      notifycationsList =
+          responseBody.map((e) => NotificationModel.fromJson(e)).toList();
 
-      print("response :: $responseBody");
-      notifycationsList.clear();
+      if (notifycationsList.isNotEmpty &&
+          notifycationsList[0].data != null) {
+        final title = notifycationsList[0].data?.title ?? '';
+        final text = notifycationsList[0].data?.text ?? '';
 
-      notifycationsList
-          .addAll(responseBody.map((e) => NotificationModel.fromJson(e)));
-
-      Get.snackbar("", "",
-          messageText: Text(notifycationsList[0].data!.text!,
-              style: GoogleFonts.tajawal(
-                  fontSize: 3.w,
-                  fontWeight: FontWeight.w700,
-                  color: LightMode.whiteColor)),
-          titleText: Text(notifycationsList[0].data!.title!,
-              style: GoogleFonts.tajawal(
-                  fontSize: 4.w,
-                  fontWeight: FontWeight.w700,
-                  color: LightMode.blackColor)),
-          backgroundColor: LightMode.blueColor,
-          borderRadius: 3.w,
-          icon: Icon(
-            Icons.notifications_active_outlined,
-            size: 7.w,
-            color: LightMode.whiteColor,
-          ),
-          onTap: (b) {},
-          colorText: LightMode.whiteColor,
-          snackStyle: SnackStyle.FLOATING);
-    } else if (statuesRequest == StatuesRequest.unprocessableException) {
+        Get.snackbar("", "",
+            messageText: Text(text,
+                style: GoogleFonts.tajawal(
+                    fontSize: 3.w,
+                    fontWeight: FontWeight.w700,
+                    color: LightMode.whiteColor)),
+            titleText: Text(title,
+                style: GoogleFonts.tajawal(
+                    fontSize: 4.w,
+                    fontWeight: FontWeight.w700,
+                    color: LightMode.blackColor)),
+            backgroundColor: LightMode.blueColor,
+            borderRadius: 3.w,
+            icon: Icon(
+              Icons.notifications_active_outlined,
+              size: 7.w,
+              color: LightMode.whiteColor,
+            ),
+            onTap: (b) {},
+            colorText: LightMode.whiteColor,
+            snackStyle: SnackStyle.FLOATING);
+      }
     } else if (statuesRequest == StatuesRequest.socketException) {
       messageHandleException(S.of(context).noInternetApi, context);
     } else if (statuesRequest == StatuesRequest.serverException) {
@@ -155,57 +157,55 @@ class NotifyController extends GetxController {
   }
 
   Future<void> getNotificationMainPage(context) async {
-    print("notify");
+    final token = sharedPreferences?.getString("token");
+    if (token == null) return;
+
     statuesRequest = StatuesRequest.loading;
     update();
-    print(sharedPreferences!.getString("token"));
-    var response = await settingRemoteData
-        .getNotification(sharedPreferences!.getString("token"));
-    print(" response ??? ${response}");
 
+    var response = await settingRemoteData.getNotification(token);
     statuesRequest = handlingData(response);
 
     if (statuesRequest == StatuesRequest.success) {
-      List responseBody = response['data'];
-      Map<String, dynamic> responseNotify = response['data'][0];
-      NotificationModel notifyModel;
-      notifyModel = NotificationModel.fromJson(responseNotify);
-      if (notifyModel == notifycationsList[0] && notifycationsList.isNotEmpty) {
-        print("response :: $responseBody");
-        notifycationsList.clear();
+      List responseBody = response['data'] ?? [];
+      if (responseBody.isNotEmpty) {
+        NotificationModel notifyModel =
+            NotificationModel.fromJson(responseBody[0]);
+        final bool isDuplicate = notifycationsList.isNotEmpty &&
+            notifycationsList[0].id == notifyModel.id;
 
-        notifycationsList
-            .addAll(responseBody.map((e) => NotificationModel.fromJson(e)));
+        notifycationsList =
+            responseBody.map((e) => NotificationModel.fromJson(e)).toList();
+
+        if (!isDuplicate && notifyModel.data != null) {
+          final title = notifyModel.data?.title ?? '';
+          final text = notifyModel.data?.text ?? '';
+
+          Get.snackbar("", "",
+              messageText: Text(text,
+                  style: GoogleFonts.tajawal(
+                      fontSize: 3.w,
+                      fontWeight: FontWeight.w700,
+                      color: LightMode.whiteColor)),
+              titleText: Text(title,
+                  style: GoogleFonts.tajawal(
+                      fontSize: 4.w,
+                      fontWeight: FontWeight.w700,
+                      color: LightMode.blackColor)),
+              backgroundColor: LightMode.blueColor,
+              borderRadius: 3.w,
+              icon: Icon(
+                Icons.notifications_active_outlined,
+                size: 7.w,
+                color: LightMode.whiteColor,
+              ),
+              onTap: (b) {},
+              colorText: LightMode.whiteColor,
+              snackStyle: SnackStyle.FLOATING);
+        }
       } else {
-        print("response :: $responseBody");
         notifycationsList.clear();
-
-        notifycationsList
-            .addAll(responseBody.map((e) => NotificationModel.fromJson(e)));
-
-        Get.snackbar("", "",
-            messageText: Text(notifyModel.data!.text!,
-                style: GoogleFonts.tajawal(
-                    fontSize: 3.w,
-                    fontWeight: FontWeight.w700,
-                    color: LightMode.whiteColor)),
-            titleText: Text(notifyModel.data!.title!,
-                style: GoogleFonts.tajawal(
-                    fontSize: 4.w,
-                    fontWeight: FontWeight.w700,
-                    color: LightMode.blackColor)),
-            backgroundColor: LightMode.blueColor,
-            borderRadius: 3.w,
-            icon: Icon(
-              Icons.notifications_active_outlined,
-              size: 7.w,
-              color: LightMode.whiteColor,
-            ),
-            onTap: (b) {},
-            colorText: LightMode.whiteColor,
-            snackStyle: SnackStyle.FLOATING);
       }
-    } else if (statuesRequest == StatuesRequest.unprocessableException) {
     } else if (statuesRequest == StatuesRequest.socketException) {
       messageHandleException(S.of(context).noInternetApi, context);
     } else if (statuesRequest == StatuesRequest.serverException) {
@@ -225,25 +225,19 @@ class NotifyController extends GetxController {
   }
 
   Future<void> getNotificationPage(context) async {
-    print("notify");
+    final token = sharedPreferences?.getString("token");
+    if (token == null) return;
+
     statuesRequest = StatuesRequest.loading;
     update();
-    print(sharedPreferences!.getString("token"));
-    var response = await settingRemoteData
-        .getNotification(sharedPreferences!.getString("token"));
-    print(" response ??? ${response}");
 
+    var response = await settingRemoteData.getNotification(token);
     statuesRequest = handlingData(response);
 
     if (statuesRequest == StatuesRequest.success) {
-      List responseBody = response['data'];
-
-      print("response :: $responseBody");
-      notifycationsList.clear();
-
-      notifycationsList
-          .addAll(responseBody.map((e) => NotificationModel.fromJson(e)));
-    } else if (statuesRequest == StatuesRequest.unprocessableException) {
+      List responseBody = response['data'] ?? [];
+      notifycationsList =
+          responseBody.map((e) => NotificationModel.fromJson(e)).toList();
     } else if (statuesRequest == StatuesRequest.socketException) {
       messageHandleException(S.of(context).noInternetApi, context);
     } else if (statuesRequest == StatuesRequest.serverException) {

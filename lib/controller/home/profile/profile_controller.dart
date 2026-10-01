@@ -14,7 +14,7 @@ import 'package:screen_go/extensions/responsive_nums.dart';
 
 class ProfileController extends GetxController {
   StatuesRequest statuesRequest = StatuesRequest.none;
-  RegisterRemoteData registerRemoteData = RegisterRemoteData(Get.put(Api()));
+  RegisterRemoteData registerRemoteData = RegisterRemoteData(Get.find<Api>());
   String typeUser = sharedPreferences!.getString("typeOfUser") == "مستأجر"
       ? "مستأجر"
       : "مالك";
@@ -137,8 +137,32 @@ class ProfileController extends GetxController {
 
     statuesRequest = handlingData(response);
 
-    if (statuesRequest == StatuesRequest.success) {
-      sharedPreferences!.setString("pageStart", "onBoarding");
+    if (statuesRequest == StatuesRequest.success ||
+        statuesRequest == StatuesRequest.unauthorizedException) {
+      final keepLocal = sharedPreferences?.getString("local") ?? "ar";
+      final keysToRemove = [
+        "token",
+        "email",
+        "phone",
+        "name",
+        "bio",
+        "birthDate",
+        "img",
+        "linkedin",
+        "fcmId",
+        "accountType",
+        "status",
+        "typeOfUser",
+        "fav",
+        "countAds",
+        "view",
+        "visit"
+      ];
+      for (var key in keysToRemove) {
+        await sharedPreferences?.remove(key);
+      }
+      await sharedPreferences?.setString("local", keepLocal);
+      await sharedPreferences?.setString("pageStart", "onBoarding");
       Get.offAll(() => const OnBoarding());
     } else if (statuesRequest == StatuesRequest.unprocessableException) {
       messageHandleException("${response['message']}", context);
